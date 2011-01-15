@@ -8731,6 +8731,14 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, uint32 damage, AuraEffect* trigg
             target = this;
             trigger_spell_id = 22588;
         }
+        // Glyph of Shadow Word: Pain
+        case 55681:
+        {
+            // Shadow Word: Pain
+            if (!(procSpell->SpellFamilyFlags[0] & 0x8000))
+                return false;
+            break;
+        }
         // Greater Heal Refund (Avatar Raiment set)
         case 37594:
         {
