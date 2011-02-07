@@ -1128,6 +1128,8 @@ bool Guardian::UpdateStats(Stats stat)
                 }
             }
             ownersBonus = float(owner->GetStat(stat)) * mod;
+            // ownersBonus is multiplied by TOTAL_PCT too
+            ownersBonus *=  GetModifierValue(UNIT_MOD_STAT_STAMINA, TOTAL_PCT);
             value += ownersBonus;
         }
     }
@@ -1411,8 +1413,8 @@ void Guardian::UpdateDamagePhysical(WeaponAttackType attType)
         {
             case 61682:
             case 61683:
-                AddPctN(mindamage, -(*itr)->GetAmount());
-                AddPctN(maxdamage, -(*itr)->GetAmount());
+                AddPctN(mindamage, -(*itr)->GetAmount() / 2.0f);
+                AddPctN(maxdamage, -(*itr)->GetAmount() / 2.0f);
                 break;
             default:
                 break;
