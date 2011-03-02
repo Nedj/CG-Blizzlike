@@ -1774,6 +1774,13 @@ void ObjectMgr::LoadGameobjects()
             continue;
         }
 
+        // Transports MUST be created as Transport class
+        if (gInfo->type == GAMEOBJECT_TYPE_MO_TRANSPORT)
+        {
+            sLog->outErrorDb("Table `gameobject` has gameobject (GUID: %u) entry %u which is a MO_TRANSPORT, skipped.", guid, entry);
+            continue;
+        }
+
         if (!gInfo->displayId)
         {
             switch (gInfo->type)
