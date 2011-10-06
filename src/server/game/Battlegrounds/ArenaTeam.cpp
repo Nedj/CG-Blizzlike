@@ -91,7 +91,7 @@ bool ArenaTeam::Create(uint64 captainGuid, uint8 type, std::string teamName, uin
     return true;
 }
 
-bool ArenaTeam::AddMember(const uint64 playerGuid)
+bool ArenaTeam::AddMember(uint64 playerGuid)
 {
     std::string playerName;
     uint8 playerClass;
@@ -194,7 +194,7 @@ bool ArenaTeam::LoadArenaTeamFromDB(QueryResult result)
     if (!result)
         return false;
 
-    Field *fields = result->Fetch();
+    Field* fields = result->Fetch();
 
     TeamId            = fields[0].GetUInt32();
     TeamName          = fields[1].GetString();
@@ -224,7 +224,7 @@ bool ArenaTeam::LoadMembersFromDB(QueryResult result)
 
     do
     {
-        Field *fields = result->Fetch();
+        Field* fields = result->Fetch();
 
         // Prevent crash if db records are broken when all members in result are already processed and current team doesn't have any members
         if (!fields)
@@ -274,7 +274,7 @@ bool ArenaTeam::LoadMembersFromDB(QueryResult result)
     return true;
 }
 
-void ArenaTeam::SetCaptain(const uint64 guid)
+void ArenaTeam::SetCaptain(uint64 guid)
 {
     // Disable remove/promote buttons
     Player* oldCaptain = ObjectAccessor::FindPlayer(GetCaptain());
@@ -529,7 +529,7 @@ uint8 ArenaTeam::GetSlotByType(uint32 type)
     return 0xFF;
 }
 
-bool ArenaTeam::IsMember(const uint64 guid) const
+bool ArenaTeam::IsMember(uint64 guid) const
 {
     for (MemberList::const_iterator itr = Members.begin(); itr != Members.end(); ++itr)
         if (itr->Guid == guid)
@@ -893,7 +893,7 @@ ArenaTeamMember* ArenaTeam::GetMember(const std::string& name)
     return NULL;
 }
 
-ArenaTeamMember* ArenaTeam::GetMember(const uint64 guid)
+ArenaTeamMember* ArenaTeam::GetMember(uint64 guid)
 {
     for (MemberList::iterator itr = Members.begin(); itr != Members.end(); ++itr)
         if (itr->Guid == guid)

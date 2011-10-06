@@ -35,7 +35,6 @@ npc_injured_patient     100%    patients for triage-quests (6622 and 6624)
 npc_doctor              100%    Gustaf Vanhowzen and Gregory Victor, quest 6622 and 6624 (Triage)
 npc_kingdom_of_dalaran_quests   Misc NPC's gossip option related to quests 12791, 12794 and 12796
 npc_mount_vendor        100%    Regular mount vendors all over the world. Display gossip if player doesn't meet the requirements to buy
-npc_riding_trainer        0%    Riding trainer from principal factions. Display gossip if player doesn't meet the requirements to learn
 npc_rogue_trainer        80%    Scripted trainers, so they are able to offer item 17126 for class quest 6681
 npc_sayge               100%    Darkmoon event fortune teller, buff player based on answers given
 npc_snake_trap_serpents  80%    AI for snakes that summoned by Snake Trap
@@ -180,7 +179,7 @@ public:
             if (!SpawnAssoc)
                 return;
 
-            if (who->isTargetableForAttack() && me->IsHostileTo(who))
+            if (me->IsValidAttackTarget(who))
             {
                 Player* playerTarget = who->ToPlayer();
 
@@ -194,7 +193,7 @@ public:
                 if (!lastSpawnedGuard)
                     SpawnedGUID = 0;
 
-                switch(SpawnAssoc->spawnType)
+                switch (SpawnAssoc->spawnType)
                 {
                     case SPAWNTYPE_ALARMBOT:
                     {
@@ -349,7 +348,7 @@ public:
 
         void ReceiveEmote(Player* player, uint32 emote)
         {
-            switch(emote)
+            switch (emote)
             {
                 case TEXT_EMOTE_CHICKEN:
                     if (player->GetQuestStatus(QUEST_CLUCK) == QUEST_STATUS_NONE && rand() % 30 == 1)
@@ -456,7 +455,7 @@ public:
                 WorldPacket data;
                 me->BuildHeartBeatMsg(&data);
                 me->SendMessageToSet(&data, true);
-                switch(emote)
+                switch (emote)
                 {
                     case TEXT_EMOTE_KISS:
                         me->HandleEmoteCommand(EMOTE_ONESHOT_SHY);
@@ -599,7 +598,7 @@ public:
             PatientDiedCount = 0;
             PatientSavedCount = 0;
 
-            switch(me->GetEntry())
+            switch (me->GetEntry())
             {
                 case DOCTOR_ALLIANCE:
                     for (uint8 i = 0; i < ALLIANCE_COORDS; ++i)
@@ -827,7 +826,7 @@ void npc_doctor::npc_doctorAI::UpdateAI(uint32 const diff)
             std::vector<Location*>::iterator itr = Coordinates.begin() + rand() % Coordinates.size();
             uint32 patientEntry = 0;
 
-            switch(me->GetEntry())
+            switch (me->GetEntry())
             {
                 case DOCTOR_ALLIANCE:
                     patientEntry = AllianceSoldierId[rand() % 3];
@@ -945,7 +944,7 @@ public:
 
                 if (Player* player = caster->ToPlayer())
                 {
-                    switch(me->GetEntry())
+                    switch (me->GetEntry())
                     {
                         case ENTRY_SHAYA:
                             if (player->GetQuestStatus(QUEST_MOON) == QUEST_STATUS_INCOMPLETE)
@@ -1053,7 +1052,7 @@ public:
                 {
                     if (Unit* unit = Unit::GetUnit(*me, CasterGUID))
                     {
-                        switch(me->GetEntry())
+                        switch (me->GetEntry())
                         {
                             case ENTRY_SHAYA:
                                 DoScriptText(SAY_SHAYA_GOODBYE, me, unit);
@@ -1275,98 +1274,6 @@ public:
 };
 
 /*######
-## npc_mount_vendor
-######*/
-
-class npc_riding_trainer : public CreatureScript
-{
-public:
-    npc_riding_trainer() : CreatureScript("npc_riding_trainer") { }
-
-    bool OnGossipHello(Player* player, Creature* creature)
-    {
-        if (creature->isQuestGiver())
-            player->PrepareQuestMenu(creature->GetGUID());
-
-        bool canLearn;
-        canLearn = false;
-        uint32 trainer = creature->GetEntry();
-        uint8 race = player->getRace();
-
-        switch (trainer)
-        {
-            case 4732:                                          //Randal Hunter
-                if (player->GetReputationRank(72) != REP_EXALTED && race != RACE_HUMAN)
-                    player->SEND_GOSSIP_MENU(5855, creature->GetGUID());
-                else canLearn = true;
-                break;
-            case 4772:                                          //Ultham Ironhorn
-                if (player->GetReputationRank(47) != REP_EXALTED && race != RACE_DWARF)
-                    player->SEND_GOSSIP_MENU(5856, creature->GetGUID());
-                else canLearn = true;
-                break;
-            case 4752:                                          //Kildar
-                if (player->GetReputationRank(76) != REP_EXALTED && race != RACE_ORC)
-                    player->SEND_GOSSIP_MENU(5841, creature->GetGUID());
-                else canLearn = true;
-                break;
-            case 3690:                                          //Kar Stormsinger
-                if (player->GetReputationRank(81) != REP_EXALTED && race != RACE_TAUREN)
-                    player->SEND_GOSSIP_MENU(5843, creature->GetGUID());
-                else canLearn = true;
-                break;
-            case 4753:                                          //Jartsam
-                if (player->GetReputationRank(69) != REP_EXALTED && race != RACE_NIGHTELF)
-                    player->SEND_GOSSIP_MENU(5844, creature->GetGUID());
-                else canLearn = true;
-                break;
-            case 4773:                                          //Velma Warnam
-                if (player->GetReputationRank(68) != REP_EXALTED && race != RACE_UNDEAD_PLAYER)
-                    player->SEND_GOSSIP_MENU(5840, creature->GetGUID());
-                else canLearn = true;
-                break;
-            case 7953:                                          //Xar'Ti
-                if (player->GetReputationRank(530) != REP_EXALTED && race != RACE_TROLL)
-                    player->SEND_GOSSIP_MENU(5842, creature->GetGUID());
-                else canLearn = true;
-                break;
-            case 7954:                                          //Binjy Featherwhistle
-                if (player->GetReputationRank(54) != REP_EXALTED && race != RACE_GNOME)
-                    player->SEND_GOSSIP_MENU(5857, creature->GetGUID());
-                else canLearn = true;
-                break;
-            case 16280:                                         //Perascamin
-                if (player->GetReputationRank(911) != REP_EXALTED && race != RACE_BLOODELF)
-                    player->SEND_GOSSIP_MENU(10305, creature->GetGUID());
-                else canLearn = true;
-                break;
-            case 20914:                                         //Aalun
-                if (player->GetReputationRank(930) != REP_EXALTED && race != RACE_DRAENEI)
-                    player->SEND_GOSSIP_MENU(10239, creature->GetGUID());
-                else canLearn = true;
-                break;
-        }
-// Here is something wrong :P
-        if (canLearn)
-        {
-            if (creature->isTrainer())
-                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TRAINER, GOSSIP_TEXT_TRAIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRAIN);
-            player->SEND_GOSSIP_MENU(player->GetGossipTextId(creature), creature->GetGUID());
-        }
-        return true;
-    }
-
-    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*uiSender*/, uint32 uiAction)
-    {
-        player->PlayerTalkClass->ClearMenus();
-        if (uiAction == GOSSIP_ACTION_TRAIN)
-            player->GetSession()->SendTrainerList(creature->GetGUID());
-
-        return true;
-    }
-};
-
-/*######
 ## npc_rogue_trainer
 ######*/
 
@@ -1406,7 +1313,7 @@ public:
     bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
     {
         player->PlayerTalkClass->ClearMenus();
-        switch(action)
+        switch (action)
         {
             case GOSSIP_ACTION_INFO_DEF + 1:
                 player->CLOSE_GOSSIP_MENU();
@@ -1510,7 +1417,7 @@ public:
 
     void SendAction(Player* player, Creature* creature, uint32 action)
     {
-        switch(action)
+        switch (action)
         {
             case GOSSIP_ACTION_INFO_DEF + 1:
                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SENDACTION_SAYGE1,            GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
@@ -1557,7 +1464,7 @@ public:
     bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action)
     {
         player->PlayerTalkClass->ClearMenus();
-        switch(sender)
+        switch (sender)
         {
             case GOSSIP_SENDER_MAIN:
                 SendAction(player, creature, action);
@@ -1799,7 +1706,7 @@ public:
             //Add delta to make them not all hit the same time
             uint32 delta = (rand() % 7) * 100;
             me->SetStatFloatValue(UNIT_FIELD_BASEATTACKTIME, float(Info->baseattacktime + delta));
-            me->SetStatFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER , float(Info->attackpower));
+            me->SetStatFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER, float(Info->attackpower));
 
             // Start attacking attacker of owner on first ai update after spawn - move in line of sight may choose better target
             if (!me->getVictim() && me->isSummon())
@@ -1811,7 +1718,7 @@ public:
         //Redefined for random target selection:
         void MoveInLineOfSight(Unit* who)
         {
-            if (!me->getVictim() && who->isTargetableForAttack() && (me->IsHostileTo(who)) && who->isInAccessiblePlaceFor(me))
+            if (!me->getVictim() && me->canCreatureAttack(who))
             {
                 if (me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                     return;
@@ -2304,7 +2211,7 @@ public:
         player->PlayerTalkClass->ClearMenus();
         bool roll = urand(0, 1);
 
-        switch(action)
+        switch (action)
         {
             case GOSSIP_ACTION_INFO_DEF + 1: //Borean Tundra
                 player->CLOSE_GOSSIP_MENU();
@@ -2376,7 +2283,7 @@ public:
     bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
     {
         player->PlayerTalkClass->ClearMenus();
-        switch(action)
+        switch (action)
         {
             case GOSSIP_ACTION_INFO_DEF + 1:
                 player->PlayerTalkClass->SendGossipMenu(TEXT_PETINFO, creature->GetGUID());
@@ -2476,7 +2383,7 @@ public:
     bool OnGossipSelect(Player* player, Creature* /*creature*/, uint32 /*sender*/, uint32 action)
     {
         player->PlayerTalkClass->ClearMenus();
-        switch(action)
+        switch (action)
         {
             case GOSSIP_ACTION_INFO_DEF + 1:
                 player->CLOSE_GOSSIP_MENU();
@@ -2635,7 +2542,7 @@ public:
     bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
     {
         player->PlayerTalkClass->ClearMenus();
-        switch(action)
+        switch (action)
         {
             case GOSSIP_ACTION_TRADE:
                 player->GetSession()->SendListInventory(creature->GetGUID());
@@ -2701,7 +2608,7 @@ public:
         bool noXPGain = player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
         bool doSwitch = false;
 
-        switch(action)
+        switch (action)
         {
             case GOSSIP_ACTION_INFO_DEF + 1://xp off
                 {
@@ -2748,7 +2655,6 @@ void AddSC_npcs_special()
     new npc_guardian;
     new npc_kingdom_of_dalaran_quests;
     new npc_mount_vendor;
-    new npc_riding_trainer;
     new npc_rogue_trainer;
     new npc_sayge;
     new npc_steam_tonk;

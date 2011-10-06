@@ -55,8 +55,8 @@ class InstanceSave
            or when the instance is reset */
         ~InstanceSave();
 
-        uint8 GetPlayerCount() { return m_playerList.size(); }
-        uint8 GetGroupCount() { return m_groupList.size(); }
+        uint8 GetPlayerCount() const { return m_playerList.size(); }
+        uint8 GetGroupCount() const { return m_groupList.size(); }
 
         /* A map corresponding to the InstanceId/MapId does not always exist.
         InstanceSave objects may be created on player logon but the maps are
@@ -118,6 +118,8 @@ class InstanceSaveManager
 {
     friend class ACE_Singleton<InstanceSaveManager, ACE_Thread_Mutex>;
     friend class InstanceSave;
+
+    private:
         InstanceSaveManager() : lock_instLists(false) {};
         ~InstanceSaveManager();
 
@@ -136,7 +138,7 @@ class InstanceSaveManager
             InstResetEvent() : type(0), difficulty(DUNGEON_DIFFICULTY_NORMAL), mapid(0), instanceId(0) {}
             InstResetEvent(uint8 t, uint32 _mapid, Difficulty d, uint16 _instanceid)
                 : type(t), difficulty(d), mapid(_mapid), instanceId(_instanceid) {}
-            bool operator == (const InstResetEvent& e) { return e.instanceId == instanceId; }
+            bool operator == (const InstResetEvent& e) const { return e.instanceId == instanceId; }
         };
         typedef std::multimap<time_t /*resetTime*/, InstResetEvent> ResetTimeQueue;
 
@@ -148,10 +150,12 @@ class InstanceSaveManager
             ResetTimeByMapDifficultyMap::const_iterator itr  = m_resetTimeByMapDifficulty.find(MAKE_PAIR32(mapid, d));
             return itr != m_resetTimeByMapDifficulty.end() ? itr->second : 0;
         }
+
         void SetResetTimeFor(uint32 mapid, Difficulty d, time_t t)
         {
             m_resetTimeByMapDifficulty[MAKE_PAIR32(mapid, d)] = t;
         }
+
         ResetTimeByMapDifficultyMap const& GetResetTimeMap() const
         {
             return m_resetTimeByMapDifficulty;
@@ -160,11 +164,12 @@ class InstanceSaveManager
 
         void Update();
 
-        InstanceSave* AddInstanceSave(uint32 mapId, uint32 instanceId, Difficulty difficulty, time_t resetTime, bool canReset, bool load = false);
+        InstanceSave* AddInstanceSave(uint32 mapId, uint32 instanceId, Difficulty difficulty, time_t resetTime,
+            bool canReset, bool load = false);
         void RemoveInstanceSave(uint32 InstanceId);
         static void DeleteInstanceFromDB(uint32 instanceid);
 
-        InstanceSave *GetInstanceSave(uint32 InstanceId);
+        InstanceSave* GetInstanceSave(uint32 InstanceId);
 
         /* statistics */
         uint32 GetNumInstanceSaves() { return m_instanceSaveById.size(); }
@@ -175,7 +180,6 @@ class InstanceSaveManager
         static uint16 ResetTimeDelay[];
 
     private:
-
         void _ResetOrWarnAll(uint32 mapid, Difficulty difficulty, bool warn, time_t resetTime);
         void _ResetInstance(uint32 mapid, uint32 instanceId);
         void _ResetSave(InstanceSaveHashMap::iterator &itr);

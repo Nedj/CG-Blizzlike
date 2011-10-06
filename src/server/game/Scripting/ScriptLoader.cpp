@@ -479,6 +479,7 @@ void AddSC_boss_blood_prince_council();
 void AddSC_boss_blood_queen_lana_thel();
 void AddSC_boss_valithria_dreamwalker();
 void AddSC_boss_sindragosa();
+void AddSC_boss_the_lich_king();
 void AddSC_icecrown_citadel_teleport();
 void AddSC_instance_icecrown_citadel();
 void AddSC_icecrown_citadel();
@@ -487,12 +488,6 @@ void AddSC_ruby_sanctum();
 void AddSC_boss_baltharus_the_warborn();
 void AddSC_boss_saviana_ragefire();
 void AddSC_boss_general_zarithrian();
-
-void AddSC_instance_ruby_sanctum_custom(); // Ruby Sanctum Custom
-void AddSC_boss_baltharus_custom(); 
-void AddSC_boss_halion_custom();
-void AddSC_boss_ragefire_custom();
-void AddSC_boss_zarithrian_custom();
 
 void AddSC_dalaran();
 void AddSC_borean_tundra();
@@ -1187,6 +1182,7 @@ void AddNorthrendScripts()
     AddSC_boss_blood_queen_lana_thel();
     AddSC_boss_valithria_dreamwalker();
     AddSC_boss_sindragosa();
+    AddSC_boss_the_lich_king();
     AddSC_icecrown_citadel_teleport();
     AddSC_instance_icecrown_citadel();
     AddSC_icecrown_citadel();
@@ -1195,12 +1191,6 @@ void AddNorthrendScripts()
     AddSC_boss_baltharus_the_warborn();
     AddSC_boss_saviana_ragefire();
     AddSC_boss_general_zarithrian();
-
-    AddSC_instance_ruby_sanctum_custom(); // Ruby Sanctum Custom
-    AddSC_boss_baltharus_custom(); 
-    AddSC_boss_halion_custom();
-    AddSC_boss_ragefire_custom();
-    AddSC_boss_zarithrian_custom();
 
     AddSC_dalaran();
     AddSC_borean_tundra();

@@ -19,6 +19,7 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "SpellAuras.h"
+#include "GridNotifiers.h"
 #include "icecrown_citadel.h"
 
 // KNOWN BUGS:
@@ -125,6 +126,7 @@ class boss_rotface : public CreatureScript
             {
                 _JustDied();
                 Talk(SAY_DEATH);
+                instance->DoRemoveAurasDueToSpellOnPlayers(MUTATED_INFECTION);
                 if (Creature* professor = Unit::GetCreature(*me, instance->GetData64(DATA_PROFESSOR_PUTRICIDE)))
                     professor->AI()->DoAction(ACTION_ROTFACE_DEATH);
             }
@@ -191,16 +193,9 @@ class boss_rotface : public CreatureScript
                             }
                             break;
                         case EVENT_MUTATED_INFECTION:
-                        {
-                            Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 0.0f, true, -MUTATED_INFECTION);
-                            if (target)
-                            {
-                                me->CastCustomSpell(SPELL_MUTATED_INFECTION, SPELLVALUE_MAX_TARGETS, 1, target, false);
-                                Talk(EMOTE_MUTATED_INFECTION, target->GetGUID());
-                            }
+                            me->CastCustomSpell(SPELL_MUTATED_INFECTION, SPELLVALUE_MAX_TARGETS, 1, NULL, false);
                             events.ScheduleEvent(EVENT_MUTATED_INFECTION, infectionCooldown);
                             break;
-                        }
                         default:
                             break;
                     }
@@ -465,7 +460,7 @@ class spell_rotface_ooze_flood : public SpellScriptLoader
 
             void Register()
             {
-                OnEffect += SpellEffectFn(spell_rotface_ooze_flood_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+                OnEffectHitTarget += SpellEffectFn(spell_rotface_ooze_flood_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
                 OnUnitTargetSelect += SpellUnitTargetFn(spell_rotface_ooze_flood_SpellScript::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENTRY);
             }
         };
@@ -473,6 +468,66 @@ class spell_rotface_ooze_flood : public SpellScriptLoader
         SpellScript* GetSpellScript() const
         {
             return new spell_rotface_ooze_flood_SpellScript();
+        }
+};
+
+class spell_rotface_mutated_infection : public SpellScriptLoader
+{
+    public:
+        spell_rotface_mutated_infection() : SpellScriptLoader("spell_rotface_mutated_infection") { }
+
+        class spell_rotface_mutated_infection_SpellScript : public SpellScript
+        {
+            PrepareSpellScript(spell_rotface_mutated_infection_SpellScript);
+
+            bool Load()
+            {
+                _target = NULL;
+                return true;
+            }
+
+            void FilterTargets(std::list<Unit*>& targets)
+            {
+                // remove targets with this aura already
+                // tank is not on this list
+                targets.remove_if (Trinity::UnitAuraCheck(true, GetSpellInfo()->Id));
+                if (targets.empty())
+                    return;
+
+                Unit* target = SelectRandomContainerElement(targets);
+                targets.clear();
+                targets.push_back(target);
+                _target = target;
+            }
+
+            void ReplaceTargets(std::list<Unit*>& targets)
+            {
+                targets.clear();
+                if (_target)
+                    targets.push_back(_target);
+            }
+
+            void NotifyTargets()
+            {
+                if (Creature* caster = GetCaster()->ToCreature())
+                    if (Unit* target = GetHitUnit())
+                        caster->AI()->Talk(EMOTE_MUTATED_INFECTION, target->GetGUID());
+            }
+
+            void Register()
+            {
+                OnUnitTargetSelect += SpellUnitTargetFn(spell_rotface_mutated_infection_SpellScript::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENEMY);
+                OnUnitTargetSelect += SpellUnitTargetFn(spell_rotface_mutated_infection_SpellScript::ReplaceTargets, EFFECT_1, TARGET_UNIT_SRC_AREA_ENEMY);
+                OnUnitTargetSelect += SpellUnitTargetFn(spell_rotface_mutated_infection_SpellScript::ReplaceTargets, EFFECT_2, TARGET_UNIT_SRC_AREA_ENEMY);
+                AfterHit += SpellHitFn(spell_rotface_mutated_infection_SpellScript::NotifyTargets);
+            }
+
+            Unit* _target;
+        };
+
+        SpellScript* GetSpellScript() const
+        {
+            return new spell_rotface_mutated_infection_SpellScript();
         }
 };
 
@@ -498,7 +553,7 @@ class spell_rotface_little_ooze_combine : public SpellScriptLoader
 
             void Register()
             {
-                OnEffect += SpellEffectFn(spell_rotface_little_ooze_combine_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+                OnEffectHitTarget += SpellEffectFn(spell_rotface_little_ooze_combine_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
             }
         };
 
@@ -540,7 +595,7 @@ class spell_rotface_large_ooze_combine : public SpellScriptLoader
 
             void Register()
             {
-                OnEffect += SpellEffectFn(spell_rotface_large_ooze_combine_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+                OnEffectHitTarget += SpellEffectFn(spell_rotface_large_ooze_combine_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
             }
         };
 
@@ -595,7 +650,7 @@ class spell_rotface_large_ooze_buff_combine : public SpellScriptLoader
 
             void Register()
             {
-                OnEffect += SpellEffectFn(spell_rotface_large_ooze_buff_combine_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+                OnEffectHitTarget += SpellEffectFn(spell_rotface_large_ooze_buff_combine_SpellScript::HandleScript, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
             }
         };
 
@@ -635,7 +690,7 @@ class spell_rotface_unstable_ooze_explosion_init : public SpellScriptLoader
 
             void Register()
             {
-                OnEffect += SpellEffectFn(spell_rotface_unstable_ooze_explosion_init_SpellScript::HandleCast, EFFECT_0, SPELL_EFFECT_FORCE_CAST);
+                OnEffectHitTarget += SpellEffectFn(spell_rotface_unstable_ooze_explosion_init_SpellScript::HandleCast, EFFECT_0, SPELL_EFFECT_FORCE_CAST);
             }
         };
 
@@ -672,7 +727,7 @@ class spell_rotface_unstable_ooze_explosion : public SpellScriptLoader
 
             void Register()
             {
-                OnEffect += SpellEffectFn(spell_rotface_unstable_ooze_explosion_SpellScript::CheckTarget, EFFECT_0, SPELL_EFFECT_TRIGGER_MISSILE);
+                OnEffectHit += SpellEffectFn(spell_rotface_unstable_ooze_explosion_SpellScript::CheckTarget, EFFECT_0, SPELL_EFFECT_TRIGGER_MISSILE);
             }
         };
 
@@ -722,6 +777,7 @@ void AddSC_boss_rotface()
     new npc_big_ooze();
     new npc_precious_icc();
     new spell_rotface_ooze_flood();
+    new spell_rotface_mutated_infection();
     new spell_rotface_little_ooze_combine();
     new spell_rotface_large_ooze_combine();
     new spell_rotface_large_ooze_buff_combine();

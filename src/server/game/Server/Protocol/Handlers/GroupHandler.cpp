@@ -252,7 +252,7 @@ void WorldSession::HandleGroupDeclineOpcode(WorldPacket & /*recv_data*/)
     if (!group) return;
 
     // Remember leader if online (group pointer will be invalid if group gets disbanded)
-    Player *leader = ObjectAccessor::FindPlayer(group->GetLeaderGUID());
+    Player* leader = ObjectAccessor::FindPlayer(group->GetLeaderGUID());
 
     // uninvite, group can be deleted
     GetPlayer()->UninviteFromGroup();
@@ -384,7 +384,7 @@ void WorldSession::HandleGroupDisbandOpcode(WorldPacket & /*recv_data*/)
 {
     sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Received CMSG_GROUP_DISBAND");
 
-    Group *grp = GetPlayer()->GetGroup();
+    Group* grp = GetPlayer()->GetGroup();
     if (!grp)
         return;
 
@@ -708,7 +708,7 @@ void WorldSession::HandleRaidReadyCheckFinishedOpcode(WorldPacket & /*recv_data*
     // Is any reaction need?
 }
 
-void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacket *data)
+void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacket* data)
 {
     uint32 mask = player->GetGroupUpdateFlag();
 
@@ -770,7 +770,7 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
 
     if (mask & GROUP_UPDATE_FLAG_AURAS)
     {
-        const uint64 auramask = player->GetAuraUpdateMaskForRaid();
+        uint64 auramask = player->GetAuraUpdateMaskForRaid();
         *data << uint64(auramask);
         for (uint32 i = 0; i < MAX_AURAS; ++i)
         {
@@ -783,7 +783,7 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
         }
     }
 
-    Pet *pet = player->GetPet();
+    Pet* pet = player->GetPet();
     if (mask & GROUP_UPDATE_FLAG_PET_GUID)
     {
         if (pet)
@@ -860,7 +860,7 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
     {
         if (pet)
         {
-            const uint64 auramask = pet->GetAuraUpdateMaskForRaid();
+            uint64 auramask = pet->GetAuraUpdateMaskForRaid();
             *data << uint64(auramask);
             for (uint32 i = 0; i < MAX_AURAS; ++i)
             {
@@ -896,7 +896,7 @@ void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket &recv_data)
         return;
     }
 
-    Pet *pet = player->GetPet();
+    Pet* pet = player->GetPet();
 
     WorldPacket data(SMSG_PARTY_MEMBER_STATS_FULL, 4+2+2+2+1+2*6+8+1+8);
     data << uint8(0);                                       // only for SMSG_PARTY_MEMBER_STATS_FULL, probably arena/bg related

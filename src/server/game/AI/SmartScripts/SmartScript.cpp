@@ -152,7 +152,6 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
 
                 delete targets;
             }
-
             mTalkerEntry = talker->GetEntry();
             mLastTextID = e.action.talk.textGroupID;
             mTextTimer = e.action.talk.duration;
@@ -211,10 +210,10 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
             {
                 for (ObjectList::const_iterator itr = targets->begin(); itr != targets->end(); ++itr)
                 {
-                    if (IsCreature(*itr))
+                    if (IsPlayer(*itr))
                     {
-                        sCreatureTextMgr->SendSound((*itr)->ToCreature(), e.action.sound.sound, CHAT_MSG_MONSTER_SAY, 0, TextRange(e.action.sound.range), Team(0), false);
-                        sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::ProcessAction:: SMART_ACTION_SOUND: source: %s (GuidLow: %u), sound: %u, range: %u",
+                        (*itr)->SendPlaySound(e.action.sound.sound, e.action.sound.range > 0 ? true : false);
+                        sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::ProcessAction:: SMART_ACTION_SOUND: target: %s (GuidLow: %u), sound: %u, onlyself: %u",
                             (*itr)->GetName(), (*itr)->GetGUIDLow(), e.action.sound.sound, e.action.sound.range);
                     }
                 }
@@ -461,7 +460,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                 if (IsPlayer(*itr))
                 {
                     (*itr)->ToPlayer()->CastedCreatureOrGO(e.action.castedCreatureOrGO.creature, GetBaseObject()->GetGUID(), e.action.castedCreatureOrGO.spell);
-                    sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::ProcessAction:: SMART_ACTION_SEND_CASTCREATUREORGO: Player guidLow %u.org Creature: %u, BaseObject GUID: "UI64FMTD" , Spell: %u",
+                    sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::ProcessAction:: SMART_ACTION_SEND_CASTCREATUREORGO: Player guidLow %u.org Creature: %u, BaseObject GUID: "UI64FMTD", Spell: %u",
                         (*itr)->GetGUIDLow(), e.action.castedCreatureOrGO.creature, GetBaseObject()->GetGUID(), e.action.castedCreatureOrGO.spell);
                 }
             }
@@ -693,6 +692,8 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                 return;
 
             me->DoFleeToGetAssistance();
+            if (e.action.flee.withEmote)
+                sCreatureTextMgr->SendChatString(me, sObjectMgr->GetTrinityStringForDBCLocale(LANG_FLEE), CHAT_MSG_MONSTER_EMOTE);
             sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::ProcessAction:: SMART_ACTION_FLEE_FOR_ASSIST: Creature %u DoFleeToGetAssistance", me->GetGUIDLow());
             break;
         }
@@ -1308,7 +1309,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
 
             bool run = e.action.setRun.run ? true : false;
             CAST_AI(SmartAI, me->AI())->SetRun(run);
-            me->GetMotionMaster()->MovePoint(0, e.target.x, e.target.y , e.target.z);
+            me->GetMotionMaster()->MovePoint(0, e.target.x, e.target.y, e.target.z);
             break;
         }
         case SMART_ACTION_RESPAWN_TARGET:
@@ -1780,7 +1781,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
         }
         case SMART_ACTION_JUMP_TO_POS:
         {
-            me->GetMotionMaster()->MoveJump(e.target.x, e.target.y , e.target.z, (float)e.action.jump.speedxy, (float)e.action.jump.speedz);
+            me->GetMotionMaster()->MoveJump(e.target.x, e.target.y, e.target.z, (float)e.action.jump.speedxy, (float)e.action.jump.speedz);
             break;
         }
         default:
@@ -2847,7 +2848,7 @@ void SmartScript::SetData(uint32 id, uint32 value)
 {
 }
 
-void SmartScript::SetGUID(const uint64 guid, int32 id)
+void SmartScript::SetGUID(uint64 guid, int32 id)
 {
 }
 

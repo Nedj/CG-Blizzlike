@@ -173,6 +173,7 @@ set(scripts_STAT_SRCS
   Northrend/IcecrownCitadel/boss_blood_queen_lana_thel.cpp
   Northrend/IcecrownCitadel/boss_valithria_dreamwalker.cpp
   Northrend/IcecrownCitadel/boss_sindragosa.cpp
+  Northrend/IcecrownCitadel/boss_the_lich_king.cpp
   Northrend/zuldrak.cpp
   Northrend/icecrown.cpp
   Northrend/Gundrak/boss_slad_ran.cpp
@@ -191,12 +192,6 @@ set(scripts_STAT_SRCS
   Northrend/DraktharonKeep/drak_tharon_keep.h
   Northrend/DraktharonKeep/boss_tharon_ja.cpp
   Northrend/DraktharonKeep/boss_dred.cpp
-  Northrend/RubySanctum/boss_baltharus.cpp
-  Northrend/RubySanctum/boss_halion.cpp
-  Northrend/RubySanctum/boss_ragefire.cpp
-  Northrend/RubySanctum/boss_zarithrian.cpp
-  Northrend/RubySanctum/instance_ruby_sanctum.cpp
-  Northrend/RubySanctum/ruby_sanctum.h
 )
 
 message("  -> Prepared: Northrend")

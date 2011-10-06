@@ -76,7 +76,7 @@ FleeingMovementGenerator<T>::_getPoint(T &owner, float &x, float &y, float &z)
     z = owner.GetPositionZ();
 
     float temp_x, temp_y, angle = 0;
-    const Map * _map = owner.GetBaseMap();
+    const Map* _map = owner.GetBaseMap();
     //primitive path-finding
     for (uint8 i = 0; i < 18; ++i)
     {
@@ -85,7 +85,7 @@ FleeingMovementGenerator<T>::_getPoint(T &owner, float &x, float &y, float &z)
 
         float distance = 5.0f;
 
-        switch(i)
+        switch (i)
         {
             case 0:
                 angle = i_cur_angle;
@@ -170,11 +170,6 @@ FleeingMovementGenerator<T>::_getPoint(T &owner, float &x, float &y, float &z)
                 return true;
             }
             float new_z = _map->GetHeight(temp_x, temp_y, z, true);
-
-			// Fix fear for Dalaran sewers
-             if (_map->GetAreaId(temp_x, temp_y, new_z) == 4378)	
-                if (new_z < z && z-2 > new_z)	
-                    continue;	
 
             if (new_z <= INVALID_HEIGHT)
                 continue;
