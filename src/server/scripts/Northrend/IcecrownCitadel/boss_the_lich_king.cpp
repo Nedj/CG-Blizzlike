@@ -499,6 +499,16 @@ class boss_the_lich_king : public CreatureScript
             {
                 _JustDied();
                 DoCastAOE(SPELL_PLAY_MOVIE, false);
+                me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
+                me->RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, 0x03);
+                float x, y, z;
+                me->GetPosition(x, y, z);
+                // use larger distance for vmap height search than in most other cases
+                float ground_Z = me->GetMap()->GetHeight(x, y, z, true, MAX_FALL_DISTANCE);
+                if (fabs(ground_Z - z) < 0.1f)
+                    return;
+
+                me->GetMotionMaster()->MoveFall(ground_Z);
             }
 
             void EnterCombat(Unit* target)
@@ -702,10 +712,6 @@ class boss_the_lich_king : public CreatureScript
                         summon->SetReactState(REACT_PASSIVE);
                         summon->CastSpell(summon, SPELL_DEFILE_AURA, false);
                         break;
-                    case NPC_VALKYR_SHADOWGUARD:
-                        summon->CastSpell(summon, SPELL_WINGS_OF_THE_DAMNED, true);
-                        summon->CastSpell(summon, SPELL_VALKYR_TARGET_SEARCH, true);
-                        break;
                     case NPC_FROSTMOURNE_TRIGGER:
                     {
                         summons.Summon(summon);
@@ -722,16 +728,7 @@ class boss_the_lich_king : public CreatureScript
                         summons.Summon(summon);
                         if (events.GetPhaseMask() & PHASE_MASK_FROSTMOURNE)
                         {
-                            Position offset;
-                            me->GetPositionOffsetTo(*summon, offset);
-                            offset.m_positionZ += 5.0f;
-                            Position dest = TerenasSpawnHeroic;
-                            dest.RelocateOffset(offset);
-                            summon->NearTeleportTo(dest.GetPositionX(), dest.GetPositionY(), dest.GetPositionZ(), dest.GetOrientation());
-                            summon->UpdateEntry(NPC_WICKED_SPIRIT);
-                            summon->SetSpeed(MOVE_FLIGHT, 0.5f);
-                            summon->CastSpell(summon, SPELL_VILE_SPIRIT_MOVE_SEARCH, true);
-                            summon->CastSpell((Unit*)NULL, SPELL_VILE_SPIRIT_DAMAGE_SEARCH, true);
+                            TeleportSpirit(summon);
                             return;
                         }
 
@@ -1028,6 +1025,13 @@ class boss_the_lich_king : public CreatureScript
                                     spawner->CastSpell(spawner, SPELL_SUMMON_SPIRIT_BOMB_1, true);  // summons bombs randomly
                                     spawner->CastSpell(spawner, SPELL_SUMMON_SPIRIT_BOMB_2, true);  // summons bombs on players
                                 }
+
+                                for (SummonList::iterator i = summons.begin(); i != summons.end(); ++i)
+                                {
+                                    Creature* summon = ObjectAccessor::GetCreature(*me, *i);
+                                    if (summon && summon->GetEntry() == NPC_VILE_SPIRIT)
+                                        TeleportSpirit(summon);
+                                }
                             }
                             break;
                         case EVENT_OUTRO_TALK_1:
@@ -1099,6 +1103,21 @@ class boss_the_lich_king : public CreatureScript
 
         private:
 
+            void TeleportSpirit(Creature* summon)
+            {
+                float dist = me->GetObjectSize() + (15.0f - me->GetObjectSize()) * float(rand_norm());
+                float angle = float(rand_norm()) * float(2.0f * M_PI);
+                Position dest = TerenasSpawnHeroic;
+                me->MovePosition(dest, dist, angle);
+                dest.m_positionZ += 15.0f;
+                summon->UpdateEntry(NPC_WICKED_SPIRIT);
+                summon->SetReactState(REACT_PASSIVE);
+                summon->NearTeleportTo(dest.GetPositionX(), dest.GetPositionY(), dest.GetPositionZ(), dest.GetOrientation());
+                summon->SetSpeed(MOVE_FLIGHT, 0.5f);
+                summon->m_Events.KillAllEvents(true);
+                summon->m_Events.AddEvent(new VileSpiritActivateEvent(summon), summon->m_Events.CalculateTime(1000));
+            }
+
             void SendMusicToPlayers(uint32 musicId) const
             {
                 WorldPacket data(SMSG_PLAY_MUSIC, 4);
@@ -1160,6 +1179,8 @@ class npc_tirion_fordring_tft : public CreatureScript
             void Reset()
             {
                 _events.Reset();
+                if (_instance->GetBossState(DATA_THE_LICH_KING) == DONE)
+                    me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             }
 
             void MovementInform(uint32 type, uint32 id)
@@ -1220,6 +1241,10 @@ class npc_tirion_fordring_tft : public CreatureScript
             void JustReachedHome()
             {
                 me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_NONE);
+
+                if (_instance->GetBossState(DATA_THE_LICH_KING) == DONE)
+                    return;
+
                 me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             }
 
@@ -1450,6 +1475,7 @@ class npc_valkyr_shadowguard : public CreatureScript
             {
                 _events.Reset();
                 me->SetReactState(REACT_PASSIVE);
+                DoCast(me, SPELL_WINGS_OF_THE_DAMNED, false);
                 me->SetSpeed(MOVE_FLIGHT, 0.642857f, true);
             }
 
@@ -1529,7 +1555,6 @@ class npc_valkyr_shadowguard : public CreatureScript
             void SetGUID(uint64 guid, int32 /* = 0*/)
             {
                 _grabbedPlayer = guid;
-                _events.Reset();
             }
 
             void UpdateAI(uint32 const diff)
@@ -1547,8 +1572,11 @@ class npc_valkyr_shadowguard : public CreatureScript
                     switch (eventId)
                     {
                         case EVENT_GRAB_PLAYER:
-                            DoCastAOE(SPELL_VALKYR_TARGET_SEARCH);
-                            _events.ScheduleEvent(EVENT_GRAB_PLAYER, 2000);
+                            if (!_grabbedPlayer)
+                            {
+                                DoCastAOE(SPELL_VALKYR_TARGET_SEARCH);
+                                _events.ScheduleEvent(EVENT_GRAB_PLAYER, 2000);
+                            }
                             break;
                         case EVENT_MOVE_TO_DROP_POS:
                             me->GetMotionMaster()->MovePoint(POINT_DROP_PLAYER, _dropPoint);
@@ -2122,7 +2150,7 @@ class spell_the_lich_king_necrotic_plague_jump : public SpellScriptLoader
 
             void AddMissingStack()
             {
-                if (!_hadAura && GetSpellValue()->EffectBasePoints[EFFECT_1] != AURA_REMOVE_BY_ENEMY_SPELL)
+                if (GetHitAura() && !_hadAura && GetSpellValue()->EffectBasePoints[EFFECT_1] != AURA_REMOVE_BY_ENEMY_SPELL)
                     GetHitAura()->ModStackAmount(1);
             }
 
@@ -2787,7 +2815,9 @@ class spell_the_lich_king_vile_spirit_damage_target_search : public SpellScriptL
 
                 // this spell has SPELL_AURA_BLOCK_SPELL_FAMILY so every next cast of this
                 // searcher spell will be blocked
-                GetCaster()->GetAI()->SetData(DATA_VILE, 1);
+                if (TempSummon* summon = GetCaster()->ToTempSummon())
+                    if (Unit* summoner = summon->GetSummoner())
+                        summoner->GetAI()->SetData(DATA_VILE, 1);
                 GetCaster()->CastSpell((Unit*)NULL, SPELL_SPIRIT_BURST, true);
                 GetCaster()->ToCreature()->DespawnOrUnsummon(3000);
                 GetCaster()->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
