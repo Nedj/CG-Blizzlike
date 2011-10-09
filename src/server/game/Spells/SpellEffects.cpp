@@ -635,7 +635,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                                 for (uint32 i = 0; i < doses; ++i)
                                     unitTarget->RemoveAuraFromStack(spellId);
                             damage *= doses;
-                            damage += int32(((Player*)m_caster)->GetTotalAttackPowerValue(BASE_ATTACK) * 0.09f * doses);
+                            damage += int32(((Player*)m_caster)->GetTotalAttackPowerValue(BASE_ATTACK) * 0.09f * combo);
                         }
                         // Eviscerate and Envenom Bonus Damage (item set effect)
                         if (m_caster->HasAura(37169))
@@ -648,7 +648,7 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                     if (uint32 combo = ((Player*)m_caster)->GetComboPoints())
                     {
                         float ap = m_caster->GetTotalAttackPowerValue(BASE_ATTACK);
-                        damage += irand(int32(ap * combo * 0.03f), int32(ap * combo * 0.07f));
+                        damage = irand(int32(m_spellValue->EffectBasePoints[0] + (ap * combo * 0.03f + (combo * (m_spellValue->EffectBasePoints[0] * 3)))),int32((m_spellValue->EffectBasePoints[0] * 3) + (ap * combo * 0.07f + (combo * (m_spellValue->EffectBasePoints[0] * 3)))));
 
                         // Eviscerate and Envenom Bonus Damage (item set effect)
                         if (m_caster->HasAura(37169))
