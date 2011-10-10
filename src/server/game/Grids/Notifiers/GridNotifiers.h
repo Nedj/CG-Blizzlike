@@ -808,6 +808,9 @@ namespace Trinity
                 if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->isTotem())
                     return false;
 
+                if(!u->isTargetableForAttack(false))
+                    return false;
+
                 return i_obj->IsWithinDistInMap(u, i_range) && !i_funit->IsFriendlyTo(u);
             }
         private:
@@ -1025,11 +1028,12 @@ namespace Trinity
                     return false;
 
                 if (m_force)
+                {
                     if (!me->IsValidAttackTarget(u))
                         return false;
-                else
-                    if (!me->canStartAttack(u, false))
-                        return false;
+                }
+                else if (!me->canStartAttack(u, false))
+                    return false;
 
                 m_range = me->GetDistance(u);   // use found unit range as new range limit for next check
                 return true;
@@ -1196,9 +1200,9 @@ namespace Trinity
     {
     public:
         AllGameObjectsWithEntryInRange(const WorldObject* pObject, uint32 uiEntry, float fMaxRange) : m_pObject(pObject), m_uiEntry(uiEntry), m_fRange(fMaxRange) {}
-        bool operator() (GameObject* pGo)
+        bool operator() (GameObject* go)
         {
-            if (pGo->GetEntry() == m_uiEntry && m_pObject->IsWithinDist(pGo, m_fRange, false))
+            if (go->GetEntry() == m_uiEntry && m_pObject->IsWithinDist(go, m_fRange, false))
                 return true;
 
             return false;
@@ -1265,9 +1269,9 @@ namespace Trinity
     {
     public:
         AllWorldObjectsInRange(const WorldObject* pObject, float fMaxRange) : m_pObject(pObject), m_fRange(fMaxRange) {}
-        bool operator() (WorldObject* pGo)
+        bool operator() (WorldObject* go)
         {
-            return m_pObject->IsWithinDist(pGo, m_fRange, false);
+            return m_pObject->IsWithinDist(go, m_fRange, false);
         }
     private:
         const WorldObject* m_pObject;

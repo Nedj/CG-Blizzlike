@@ -1234,12 +1234,13 @@ void AddOutdoorPvPScripts()
 void AddBattlegroundScripts()
 {
 #ifdef SCRIPTS
+	void AddSC_DB_CombatCheck();
 #endif
 }
 
 #ifdef SCRIPTS
 /* This is where custom scripts' loading functions should be declared. */
-
+  AddSC_DB_CombatCheck();
 #endif
 
 void AddCustomScripts()
