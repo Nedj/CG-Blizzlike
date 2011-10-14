@@ -11,6 +11,10 @@
 set(scripts_STAT_SRCS
   ${scripts_STAT_SRCS}
   Custom/combatcheck.cpp
+  Custom/PvpAddon.cpp
+  Custom/PvpAddon.h
+  Custom/system_hook.cpp
+  Custom/Bountyhunter.cpp
 )
 
 message("  -> Prepared: Custom")
