@@ -488,6 +488,26 @@ enum ScriptCommands
     SCRIPT_COMMAND_PLAYMOVIE             = 34                // source = Player, datalong = movie id
 };
 
+// Donation Types
+enum RewardType
+{
+	REWARD_TYPE_SINGLEITEM = 0,
+	REWARD_TYPE_MULTIITEM,
+	REWARD_TYPE_GOLD,
+	REWARD_TYPE_LEVEL,
+	REWARD_TYPE_SKILL,
+	REWARD_TYPE_SPELL,
+	REWARD_TYPE_TITLE,
+	REWARD_TYPE_REPUTATION,
+	REWARD_TYPE_ITEMSET,
+	REWARD_TYPE_RENAME,
+	REWARD_TYPE_CUSTOMIZE,
+	REWARD_TYPE_RACECHANGE,
+	REWARD_TYPE_FACTIONCHANGE,
+	NUM_DONATION_TYPES,
+};
+#define REWARD_SIZE 4
+
 /// Storage class for commands issued for delayed execution
 struct CliCommandHolder
 {
@@ -632,6 +652,9 @@ class World
         void SendZoneMessage(uint32 zone, WorldPacket* packet, WorldSession* self = 0, uint32 team = 0);
         void SendZoneText(uint32 zone, const char *text, WorldSession* self = 0, uint32 team = 0);
         void SendServerMessage(ServerMessageType type, const char *text = "", Player* player = NULL);
+
+		// Send rewards
+        void SendRewards();
 
         /// Are we in the middle of a shutdown?
         bool IsShutdowning() const { return m_ShutdownTimer > 0; }
