@@ -2806,7 +2806,7 @@ void World::SendRewards()
             misc[2] = field[5].GetUInt32();
             misc[3] = field[6].GetUInt32();
             
-            Player * plr = sObjectAccessor->FindPlayer(receiver);
+            Player * plr = sObjectMgr->GetPlayerByLowGUID(receiver);
 
             if(!plr || !plr->IsInWorld())
                 continue;
