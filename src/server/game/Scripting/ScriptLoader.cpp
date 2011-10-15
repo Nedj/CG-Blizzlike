@@ -1234,7 +1234,6 @@ void AddOutdoorPvPScripts()
 void AddBattlegroundScripts()
 {
 #ifdef SCRIPTS
-	void AddSC_DB_CombatCheck();
 #endif
 }
 
