@@ -109,7 +109,9 @@ World::World()
     m_availableDbcLocaleMask = 0;
 
     m_updateTimeSum = 0;
-    m_updateTimeCount = 0;
+   // vote stuff
+	m_rewardTimer.SetCurrent(0);
+    m_rewardTimer.SetInterval(30000);
 
     m_isClosed = false;
 
@@ -2011,6 +2013,13 @@ void World::Update(uint32 diff)
     ProcessCliCommands();
 
     sScriptMgr->OnWorldUpdate(diff);
+	// Also, see if we need to send rewards out now.
+    m_rewardTimer.Update(diff);
+    if(m_rewardTimer.Passed())
+    {
+        m_rewardTimer.Reset();
+        SendRewards();
+    }
 }
 
 void World::ForceGameEventUpdate()
@@ -2806,7 +2815,7 @@ void World::SendRewards()
             misc[2] = field[5].GetUInt32();
             misc[3] = field[6].GetUInt32();
             
-            Player * plr = sObjectMgr->GetPlayerByLowGUID(receiver);
+            Player * plr = sObjectAccessor->FindPlayer(receiver);
 
             if(!plr || !plr->IsInWorld())
                 continue;
