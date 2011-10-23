@@ -3197,6 +3197,9 @@ void SpellMgr::LoadDbcDataCorrections()
                 spellInfo->EffectImplicitTargetB[0] = 0;
                 spellInfo->EffectImplicitTargetB[1] = 0;
                 break;
+            case 49575: // Death Grip
+                spellInfo->EffectMiscValueB[0] = 70;
+                break;
             case 53241: // Marked for Death (Rank 1)
             case 53243: // Marked for Death (Rank 2)
             case 53244: // Marked for Death (Rank 3)
