@@ -651,10 +651,10 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                 // Eviscerate
                 else if ((m_spellInfo->SpellFamilyFlags[0] & 0x00020000) && m_caster->GetTypeId() == TYPEID_PLAYER)
                 {
-                    if (uint32 combo = ((Player*)m_caster)->GetComboPoints())
-                    {
-                        float ap = m_caster->GetTotalAttackPowerValue(BASE_ATTACK);
-                        damage = irand(int32(m_spellValue->EffectBasePoints[0] + (ap * combo * 0.03f + (combo * (m_spellValue->EffectBasePoints[0] * 3)))),int32((m_spellValue->EffectBasePoints[0] * 3) + (ap * combo * 0.07f + (combo * (m_spellValue->EffectBasePoints[0] * 3)))));
+                                    if (uint32 combo = ((Player*)m_caster)->GetComboPoints())
+                {
+                    float ap = m_caster->GetTotalAttackPowerValue(BASE_ATTACK);
+                   damage += int32(ap * combo * 0.091f);
 
                         // Eviscerate and Envenom Bonus Damage (item set effect)
                         if (m_caster->HasAura(37169))
