@@ -443,9 +443,9 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                     case 51963:
                     {
                         // about +4 base spell dmg per level
-                        damage = (m_caster->getLevel() - 60) * 4 + 60;
+                        damage = (m_caster->getLevel() - 60) * 4 + 40;
                         if (Unit *pOwner = m_caster->GetOwner())	
-                            damage += (pOwner->GetTotalAttackPowerValue(BASE_ATTACK)*0.4);
+                            damage += (pOwner->GetTotalAttackPowerValue(BASE_ATTACK)*0.33);
                         break;
                     }
                 }
