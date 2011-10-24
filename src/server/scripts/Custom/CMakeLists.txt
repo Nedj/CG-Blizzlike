@@ -15,6 +15,14 @@ set(scripts_STAT_SRCS
   Custom/PvpAddon.h
   Custom/system_hook.cpp
   Custom/Bountyhunter.cpp
+  Custom/trainer_alchemy.cpp
+  Custom/trainer_blacksmithing.cpp
+  Custom/trainer_enchanting.cpp
+  Custom/trainer_engineering.cpp
+  Custom/trainer_inscription.cpp
+  Custom/trainer_jewelcrafting.cpp
+  Custom/trainer_leatherworking.cpp
+  Custom/trainer_tailoring.cpp
 )
 
 message("  -> Prepared: Custom")
