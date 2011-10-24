@@ -5376,29 +5376,7 @@ void Player::DurabilityPointsLossAll(int32 points, bool inventory)
 
 void Player::DurabilityPointsLoss(Item* item, int32 points)
 {
-    int32 pMaxDurability = item->GetUInt32Value(ITEM_FIELD_MAXDURABILITY);
-    int32 pOldDurability = item->GetUInt32Value(ITEM_FIELD_DURABILITY);
-    int32 pNewDurability = pOldDurability - points;
-
-    if (pNewDurability < 0)
-        pNewDurability = 0;
-    else if (pNewDurability > pMaxDurability)
-        pNewDurability = pMaxDurability;
-
-    if (pOldDurability != pNewDurability)
-    {
-        // modify item stats _before_ Durability set to 0 to pass _ApplyItemMods internal check
-        if (pNewDurability == 0 && pOldDurability > 0 && item->IsEquipped())
-            _ApplyItemMods(item, item->GetSlot(), false);
-
-        item->SetUInt32Value(ITEM_FIELD_DURABILITY, pNewDurability);
-
-        // modify item stats _after_ restore durability to pass _ApplyItemMods internal check
-        if (pNewDurability > 0 && pOldDurability == 0 && item->IsEquipped())
-            _ApplyItemMods(item, item->GetSlot(), true);
-
-        item->SetState(ITEM_CHANGED, this);
-    }
+return;
 }
 
 void Player::DurabilityPointLossForEquipSlot(EquipmentSlots slot)
