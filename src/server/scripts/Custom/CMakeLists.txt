@@ -23,6 +23,9 @@ set(scripts_STAT_SRCS
   Custom/trainer_jewelcrafting.cpp
   Custom/trainer_leatherworking.cpp
   Custom/trainer_tailoring.cpp
+  Custom/petopia.cpp
+  Custom/hunter_hourglass.cpp
+  Custom/paw_teleporter.cpp
 )
 
 message("  -> Prepared: Custom")
