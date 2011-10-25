@@ -7,4 +7,5 @@ INSERT INTO `spell_linked_spell` (`spell_trigger`, `spell_effect`, `type`, `comm
 ('46924', '-68766', '2', 'Bladestorm immune at Desecration'),
 ('46924', '-8643', '2', 'Bladestorm immune at Kidney Shot'),
 ('46924', '-58617', '2', 'Bladestorm immune at Glyph of Heart Strike'),
-('48707', '-33786', '2', 'AMS Immune to Cyclone');
+('48707', '-33786', '2', 'AMS Immune to Cyclone'),
+('48707', '-51514', '2', 'AMS Immune to Hex');
