@@ -1294,15 +1294,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
                 m_damage += CalculatePctF(damage, m_caster->GetTotalAttackPowerValue(BASE_ATTACK));
                 return;
             }
-            switch (m_spellInfo->Id)
-            {
-                // Bloodthirst
-                case 23881:
-                {
-                    m_caster->CastCustomSpell(unitTarget, 23885, &damage, NULL, NULL, true, NULL);
-                    return;
-                }
-            }
+
             // Item - Warrior T10 Melee 4P Bonus	
             if (m_spellInfo->Id == 46916 || m_spellInfo->Id == 52437)	
                 if (Aura * aur = m_caster->GetAura(70847))	
