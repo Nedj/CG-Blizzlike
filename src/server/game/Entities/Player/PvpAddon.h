@@ -16,7 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Copyright (C) nef2.1 deco
+ * Copyright (C) Deco CrusadeGaming 2011
  * 
  */
  
@@ -91,11 +91,11 @@ class PvpAddon
 		void LoadPvPAddon();
 		
 		/* KillingStreak */
-		void KillingStreakSystem(Player *pKiller, Player *pVictim);
+		void KillingStreakSystem(Player *Killer, Player *Victim);
 		void LoadKillingStreak();
 		bool isKillingStreakArea(uint32 areaId);
-		void CleanKillingStreak(Player *pPlayer);
-		void SendKSMail(Player *pKiller, uint32 itemId, uint32 quantity);
+		void CleanKillingStreak(Player *Player);
+		void SendKSMail(Player *Killer, uint32 itemId, uint32 quantity);
 		KillingStreakData const* GetKillingStreakData(uint32 areaId, uint32 kill) const;
 		 
 	protected:

@@ -16,7 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Copyright (C) nef2.1 deco
+ * Copyright (C) Deco CrusadeGaming 2011
  * 
  */
  
@@ -142,21 +142,21 @@ KillingStreakData const* PvpAddon::GetKillingStreakData(uint32 areaId, uint32 ki
 }
 
 
-void PvpAddon::KillingStreakSystem(Player *pKiller, Player *pVictim)
+void PvpAddon::KillingStreakSystem(Player *Killer, Player *Victim)
 {
-    uint32 killerGuid = pKiller->GetGUID();
-    uint32 victimGuid = pVictim->GetGUID();
+    uint32 killerGuid = Killer->GetGUID();
+    uint32 victimGuid = Victim->GetGUID();
                 
     if(killerGuid == victimGuid) return;
     
-    if ((pKiller->getLevel() - pVictim->getLevel()) < DIFF_LEVEL) return;
+    if ((Killer->getLevel() - Victim->getLevel()) < DIFF_LEVEL) return;
 
 	if (KSsystem[killerGuid].areaId != NULL)
 	{
-		if (pKiller->GetAreaId() != KSsystem[killerGuid].areaId)
+		if (Killer->GetAreaId() != KSsystem[killerGuid].areaId)
 		{
 			KSsystem[killerGuid].KillStreak = 0;
-			KSsystem[killerGuid].areaId = pKiller->GetAreaId();
+			KSsystem[killerGuid].areaId = Killer->GetAreaId();
 		}
 	 }
 
@@ -165,7 +165,7 @@ void PvpAddon::KillingStreakSystem(Player *pKiller, Player *pVictim)
     KSsystem[killerGuid].LastGUIDKill = victimGuid;
     KSsystem[victimGuid].LastGUIDKill = 0;
 
-	 const KillingStreakData *killingstreak = sPvpAddon->GetKillingStreakData(pKiller->GetAreaId(), KSsystem[killerGuid].KillStreak);
+	 const KillingStreakData *killingstreak = sPvpAddon->GetKillingStreakData(Killer->GetAreaId(), KSsystem[killerGuid].KillStreak);
 
 	if (killingstreak == NULL)
 		return;
@@ -177,12 +177,12 @@ void PvpAddon::KillingStreakSystem(Player *pKiller, Player *pVictim)
 		switch (killingstreak->notification_type)
 		{
 			case ZONE_BROADCAST :
-				sprintf(msg, killingstreak->notification.c_str(), pKiller->GetName(), killingstreak->kill_required);
-				sWorld->SendZoneText(pKiller->GetZoneId(), msg);
+				sprintf(msg, killingstreak->notification.c_str(), Killer->GetName(), killingstreak->kill_required);
+				sWorld->SendZoneText(Killer->GetZoneId(), msg);
 			break;
 						
 			case WORLD_BROADCAST:
-				sprintf(msg, killingstreak->notification.c_str(), pKiller->GetName(), killingstreak->kill_required);
+				sprintf(msg, killingstreak->notification.c_str(), Killer->GetName(), killingstreak->kill_required);
 				sWorld->SendWorldText(LANG_KS_WORLD_BROADCAST, msg);
 			break;
 						
@@ -193,27 +193,27 @@ void PvpAddon::KillingStreakSystem(Player *pKiller, Player *pVictim)
 	}
 					
 	if (killingstreak->honor_point != NULL)
-		pKiller->ModifyHonorPoints(killingstreak->honor_point);
+		Killer->ModifyHonorPoints(killingstreak->honor_point);
 					
 	if(killingstreak->arena_point != NULL)
-		pKiller->ModifyArenaPoints(killingstreak->arena_point);
+		Killer->ModifyArenaPoints(killingstreak->arena_point);
 						
 	if (killingstreak->item_entry != NULL && killingstreak->quantity != NULL)
 	{
 		ItemPosCountVec dest;
-		uint8 msg = pKiller->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, killingstreak->item_entry, killingstreak->quantity);
+		uint8 msg = Killer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, killingstreak->item_entry, killingstreak->quantity);
 						
 		if (msg != EQUIP_ERR_OK)
 		{
-			sPvpAddon->SendKSMail(pKiller, killingstreak->item_entry, killingstreak->quantity);
+			sPvpAddon->SendKSMail(Killer, killingstreak->item_entry, killingstreak->quantity);
 			return;
 		}
 			
-		pKiller->AddItem(killingstreak->item_entry, killingstreak->quantity);
+		Killer->AddItem(killingstreak->item_entry, killingstreak->quantity);
 	}
 }
 
-void PvpAddon::SendKSMail(Player *pKiller, uint32 itemId, uint32 quantity)
+void PvpAddon::SendKSMail(Player *Killer, uint32 itemId, uint32 quantity)
 {
 	/*uint32 noSpaceForCount = 0;
 	quantity -= noSpaceForCount;
@@ -285,10 +285,10 @@ void PvpAddon::SendKSMail(Player *pKiller, uint32 itemId, uint32 quantity)
 	ChatHandler(pKiller).PSendSysMessage("Vous n'avez pas assez de place dans votre sac. L'objet a ete envoye dans votre boite aux lettres.");*/
 }
 
-void PvpAddon::CleanKillingStreak(Player *pPlayer)
+void PvpAddon::CleanKillingStreak(Player *Player)
 {
-	uint32 pguid = pPlayer->GetGUID();
-	KSsystem[pguid].LastGUIDKill = 0;
-	KSsystem[pguid].KillStreak = 0;
-	KSsystem[pguid].areaId = 0;
+	uint32 guid = Player->GetGUID();
+	KSsystem[guid].LastGUIDKill = 0;
+	KSsystem[guid].KillStreak = 0;
+	KSsystem[guid].areaId = 0;
 }
