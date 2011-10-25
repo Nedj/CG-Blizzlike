@@ -1612,7 +1612,7 @@ void Unit::CalcAbsorbResist(Unit* victim, SpellSchoolMask schoolMask, DamageEffe
 
         static uint32 const BOSS_LEVEL = 83;
         static float const BOSS_RESISTANCE_CONSTANT = 510.0f;
-        uint32 level = getLevel();
+        uint32 level = victim->getLevel();
         float resistanceConstant = 0.0f;
 
         if (level == BOSS_LEVEL)
@@ -14366,6 +14366,8 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
                 }
                 case SPELL_AURA_PROC_TRIGGER_DAMAGE:
                 {
+                    if(!target) //Crash: spell 49065 casted by GO
+                        return;
                     sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "ProcDamageAndSpell: doing %u damage from spell id %u (triggered by %s aura of spell %u)", triggeredByAura->GetAmount(), spellInfo->Id, (isVictim?"a victim's":"an attacker's"), triggeredByAura->GetId());
                     SpellNonMeleeDamage damageInfo(this, target, spellInfo->Id, spellInfo->SchoolMask);
                     uint32 damage = SpellDamageBonus(target, spellInfo, triggeredByAura->GetAmount(), SPELL_DIRECT_DAMAGE);
