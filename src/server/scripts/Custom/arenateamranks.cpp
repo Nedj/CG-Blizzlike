@@ -111,7 +111,7 @@ class ArenaTeamRanks : public CreatureScript
         }
         
     public:
-        BountyHunter() : CreatureScript("ArenaTeamRanks"){}
+        ArenaTeamRanks() : CreatureScript("ArenaTeamRanks"){}
         
         bool OnGossipHello(Player *player, Creature *creature) {
             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_BATTLE, "2v2 Rankings", GOSSIP_SENDER_MAIN, ARENA_2V2_LADDER);
@@ -210,7 +210,7 @@ class ArenaTeamRanks : public CreatureScript
                         std::stringstream buf;
                         buf << "Name: " << name;
                         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_BATTLE, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
-                        buf.str(" Rating: ")
+                        buf.str(" Rating: ");
                         buf << rating << " (rank " << rank << ")";
                         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                         buf.str(" Week: ");
@@ -242,9 +242,9 @@ class ArenaTeamRanks : public CreatureScript
                             uint32 guid, personalRating, level;
                             std::string name, race, Class;
                             
-                            std::stringstream member_c;
-                            member_c << memberCount << " team " << ((memberCount == 1) << "member" : " members") << " found:";
-                            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, member_c.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
+                            buf.str("")
+                            buf << memberCount << " team " << ((memberCount == 1) ? "member" : " members") << " found:";
+                            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                             
                             do {
                                 // populate fields
