@@ -144,6 +144,8 @@ class ArenaTeamRanks : public CreatureScript
                     
                     if(!result) {
                         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Goodbye", GOSSIP_SENDER_MAIN, ARENA_GOODBYE);
+                        
+                        
                         player->SEND_GOSSIP_MENU(ARENA_GOSSIP_NOTEAMS, Creature->GetGUID());
                     } else {
                         //uint64 rowCount = result->GetRowCount();
