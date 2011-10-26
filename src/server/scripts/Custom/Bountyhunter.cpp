@@ -378,6 +378,12 @@ class BountyHunter : public CreatureScript
             return true;
             //player->SEND_GOSSIP_MENU(BOUNTY_TEXT_BOUNTY_INFO, Creature->GetGUID());
         }
+        
+        inline bool closeGossipNotify(Player *pPlayer, std::string message) {
+            pPlayer->PlayerTalkClass->SendCloseGossip();
+            pPlayer->GetSession().SendNotification(message.c_str());
+            return true;
+        }
     
     public:
         BountyHunter() : CreatureScript("BountyHunter")
@@ -399,7 +405,7 @@ class BountyHunter : public CreatureScript
         }
         
         void ClaimBounty(BountyData *bounty, Player *killer, Player *victim) {
-            if (bounty->expiretime < time(NULL)) {
+            if (bounty->expiretime < time(NULL) || victim->InArena()) {
                 // bounty expired, take no action.
                 return;
             }
@@ -453,7 +459,7 @@ class BountyHunter : public CreatureScript
         }
         
         void ClaimReverseBounty(BountyData *bounty, Player *pBounty, Player *pBountyPoster) {
-            if (bounty->expiretime < time(NULL)) {
+            if (bounty->expiretime < time(NULL) || pBountyPoster->InArena()) {
                 // bounty expired, take no action.
                 return;
             }
@@ -639,7 +645,7 @@ class BountyHunter : public CreatureScript
             if (uiAction < GOSSIP_PRICE_START || uiAction >= GOSSIP_PRICE_MAX) {
                 // invalid option, just close menu...
                 sLog->outString("Invalid action passed to bounty code.");
-                pPlayer->PlayerTalkClass->SendCloseGossip();
+                
                 return true;
             }
             // find out the corresponding bounty price
@@ -656,7 +662,6 @@ class BountyHunter : public CreatureScript
                 code[0] = toupper(code[0]);
             
             sLog->outString("Name ... %s", code.c_str());
-            
             if(bountyMap.size() == BOUNTY_LIMIT) {
                 // no more bounties can be posted.
                 sLog->outString("Maximum bounty size reached");
@@ -668,39 +673,32 @@ class BountyHunter : public CreatureScript
             Player *pBounty = sObjectAccessor->FindPlayerByName(code.c_str());
             if(!pBounty) {
                 // we cannot add bounties to offline players.
-                sLog->outString("Offline player");
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TALK, "I couldn't find that player, maybe he or she is offline. Back to the prices?", GOSSIP_SENDER_MAIN, OPTION_SELECT_BOUNTY);
-                pPlayer->PlayerTalkClass->SendGossipMenu(BOUNTY_TEXT_ERROR_HAPPENED, pCreature->GetGUID());
-                return true;
+                return closeGossipNotify(pPlayer, "That player is offline.");
             }
             if(pBounty->isGameMaster()) {
                 // we cannot set bounties on game masters!
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TALK, "You cannot set a bounty on a Game Master!", GOSSIP_SENDER_MAIN, OPTION_SELECT_BOUNTY);
-                pPlayer->PlayerTalkClass->SendGossipMenu(BOUNTY_TEXT_ERROR_HAPPENED, pCreature->GetGUID());
-                return true;
+                return closeGossipNotify(pPlayer, "That player is a Game Master.");
+            }
+            if(pBounty->InArena()) {
+                // we cannot set bounties on game masters!
+                return closeGossipNotify(pPlayer, "That player is currently in an Arena Match.");
             }
             uint32 guid = pBounty->GetGUIDLow();
             BountyData *oldBounty = getBountyByGuid(guid);
             if(oldBounty) {
                 // bounty was found.
                 std::string gold = UInt32ToString(oldBounty->money / 10000);
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TALK, "That player already has a "+gold+"g bounty on them! Back to prices?", GOSSIP_SENDER_MAIN, OPTION_SELECT_BOUNTY);
-                pPlayer->PlayerTalkClass->SendGossipMenu(BOUNTY_TEXT_ERROR_HAPPENED, pCreature->GetGUID());
-                return true;
+                return closeGossipNotify(pPlayer, "That player already has a "+gold+"g bounty on them!");
             }
             if(pPlayer->GetGUIDLow() == guid) {
                 // player is trying to hunt himself?
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TALK, "You can't set a bounty on yourself! Back to prices?", GOSSIP_SENDER_MAIN, OPTION_SELECT_BOUNTY);
-                pPlayer->PlayerTalkClass->SendGossipMenu(BOUNTY_TEXT_ERROR_HAPPENED, pCreature->GetGUID());
-                return true;
+                return closeGossipNotify(pPlayer, "You can't set a bounty on yourself.");
             }
             
             if(pPlayer->GetMoney() < bountyPrice)
             {
                 // too damn poor.
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TALK, "You don't have enough money! Back to prices?", GOSSIP_SENDER_MAIN, OPTION_SELECT_BOUNTY);
-                pPlayer->PlayerTalkClass->SendGossipMenu(BOUNTY_TEXT_ERROR_HAPPENED, pCreature->GetGUID());
-                return true; 
+                return closeGossipNotify(pPlayer, "You don't have enough money to do that!");
             }
             
             BountyData bounty;
@@ -783,7 +781,7 @@ class BountyTimer : public WorldScript
                 } else {
                     Player *player = sObjectAccessor->FindPlayer(bounty->guid);
                     if(player) {
-                        if(player->isAlive()) { // keep refreshing the aura. 
+                        if(player->isAlive() && !player->InArena()) { // keep refreshing the aura. 
                             player->AddAura(BOUNTY_MARKER, player);
                         }
                     }
@@ -820,11 +818,13 @@ class BountyKills : public PlayerScript
         void OnLogin(Player* player) 
         {
             BountyData *bounty = getBountyByGuid(player->GetGUIDLow());
-            if(!bounty)
-                return;
-            if(bounty->expiretime >= time(NULL))
+            if(!bounty) {
+                if(player->HasAura(BOUNTY_MARKER)) 
+                    player->RemoveAura(BOUNTY_MARKER);
+            } 
+            else if(bounty->expiretime >= time(NULL))
             {
-                if(player->isAlive())
+                if(player->isAlive() && !player->InArena())
                         player->AddAura(BOUNTY_MARKER, player);
                 uint32 gold = bounty->money / 10000;
                 
