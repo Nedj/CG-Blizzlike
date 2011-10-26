@@ -74,7 +74,6 @@
 #include "InstanceScript.h"
 #include <cmath>
 #include "AccountMgr.h"
-#include "PvpAddon.h"
 
 #define ZONE_UPDATE_INTERVAL (1*IN_MILLISECONDS)
 
@@ -7479,8 +7478,6 @@ void Player::UpdateZone(uint32 newZone, uint32 newArea)
     }
 
     UpdatePvPState();
-        	
-  sPvpAddon->CleanKillingStreak(this);
 
     // remove items with area/map limitations (delete only for alive player to allow back in ghost mode)
     // if player resurrected at teleport this will be applied in resurrect code
