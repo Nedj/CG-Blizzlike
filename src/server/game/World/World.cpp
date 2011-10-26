@@ -1515,7 +1515,7 @@ void World::SetInitialWorldSettings()
     sAchievementMgr->LoadAchievementCriteriaList();
     sLog->outString("Loading Achievement Criteria Data...");
     sAchievementMgr->LoadAchievementCriteriaData();
-    sLog->outString("Loading Achievement rewardty...");
+    sLog->outString("Loading Achievement Rewards...");
     sAchievementMgr->LoadRewards();
     sLog->outString("Loading Achievement Reward Locales...");
     sAchievementMgr->LoadRewardLocales();
