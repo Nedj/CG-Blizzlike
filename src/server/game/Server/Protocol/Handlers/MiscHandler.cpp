@@ -339,9 +339,14 @@ void WorldSession::HandleWhoOpcode(WorldPacket & recv_data)
         if ((matchcount++) >= sWorld->getIntConfig(CONFIG_MAX_WHO))
             continue;
 
-        if (itr->second->isGameMaster())
+        if (itr->second->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_DEVELOPER))
         {
-            pname = "<GM>";
+            pname = "<Dev>";	
+      pname.append(itr->second->GetName());	
+        }	
+        else if (itr->second->isGameMaster())	
+        {	
+      pname = "<GM>";
             pname.append(itr->second->GetName());
         }
 
