@@ -11,9 +11,7 @@
 set(scripts_STAT_SRCS
   ${scripts_STAT_SRCS}
   Custom/combatcheck.cpp
-  Custom/PvpAddon.cpp
-  Custom/PvpAddon.h
-  Custom/system_hook.cpp
+  Custom/killstreak.cpp
   Custom/Bountyhunter.cpp
   Custom/trainer_alchemy.cpp
   Custom/trainer_blacksmithing.cpp
