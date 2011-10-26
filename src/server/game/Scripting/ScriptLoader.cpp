@@ -1240,7 +1240,7 @@ void AddBattlegroundScripts()
 #ifdef SCRIPTS
 /* This is where custom scripts' loading functions should be declared. */
   void AddSC_DB_CombatCheck();
-  void AddSC_system_hook();
+  void AddSC_killstreak();
   void AddSC_BountyHunter();
   void AddSc_Script_TLeatherworking();
   void AddSc_Script_TAlchemy();
@@ -1261,7 +1261,7 @@ void AddCustomScripts()
 #ifdef SCRIPTS
     /* This is where custom scripts should be added. */
         AddSC_DB_CombatCheck();
-	AddSC_system_hook();
+	AddSC_killstreak();
 	AddSC_BountyHunter();
         AddSc_Script_TLeatherworking();
         AddSc_Script_TAlchemy();
