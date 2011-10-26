@@ -265,9 +265,10 @@ class ArenaTeamRanks : public CreatureScript
                                 
                                 // TODO: add output
                                 buf.str(""); // clear it
-                                buf << memberPos << ". " << name;
+                                buf << memberPos << ". "; 
                                 if (guid == captainGuid) 
-                                    buf <<  " [Captain]";
+                                    buf <<  "Team Captain ";
+                                buf << name << ", " << getPlayerStatus(guid);
                                 
                                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_INTERACT_1, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                                 buf.str(" Level ");
