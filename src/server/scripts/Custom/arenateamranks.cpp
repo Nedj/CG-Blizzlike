@@ -158,9 +158,8 @@ class ArenaTeamRanks : public CreatureScript
                             seasonLosses = fields[4].GetUInt32();
                             
                             std::stringstream buffer;
-                            buffer << rank << ". [" << rating << "] " << name << " (";
-                            buffer << seasonWins << (seasonWins == 1 ? " win, " : " wins, ");
-                            buffer << seasonLosses << (seasonLosses == 1 ? " loss)" : " losses)");
+                            buffer << rank << ". [" << rating << "] " << name;
+                            buffer << " (" << seasonWins << "-" << seasonLosses << ")";
                             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_BATTLE, buffer.str(), GOSSIP_SENDER_MAIN, ARENA_START_TEAM_LOOKUP + teamId);
                             
                             rank++;
@@ -208,16 +207,16 @@ class ArenaTeamRanks : public CreatureScript
                         std::string weekWinPercentage = getWinPercent(weekWins, weekLosses);
                         
                         std::stringstream buf;
-                        buf << "Name: " << name;
+                        buf << "Team Name: " << name;
                         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_BATTLE, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                         buf.str("");
-                        buf << " Rating: " << rating << " (rank " << rank << ")";
+                        buf << "Rating: " << rating << " (rank " << rank << ", bracket " << type << "v" << type << ")";
                         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                         buf.str("");
-                        buf << " Week: " << weekWins << " win" << (weekWins == 1 ? "" : "s") << " (" << weekWinPercentage << "), " << weekLosses << " losse" << (weekLosses == 1 ? "" : "s") << ", " << (weekWins + weekLosses) << " total."; 
+                        buf << "Total Week: " << weekWins << "-" << weekLosses << " (" << weekWinPercentage << " win), " << (weekWins + weekLosses) << " played"; 
                         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                         buf.str("");
-                        buf << " Season: " << seasonWins << " win" << (seasonWins == 1 ? "" : "s") << " (" << seasonWinPercentage << "), " << seasonLosses << " losse" << (seasonLosses == 1 ? "" : "s") << ", " << (seasonWins + seasonLosses) << " total."; 
+                        buf << "Total Season: " << seasonWins << "-" << seasonLosses << " (" << seasonWinPercentage << " win), " << (seasonWins + seasonLosses) << " played"; 
                         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                         
                         QueryResult members = CharacterDatabase.PQuery(
@@ -272,13 +271,13 @@ class ArenaTeamRanks : public CreatureScript
                                 
                                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_INTERACT_1, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                                 buf.str("");
-                                buf << " Level " << level << " " << race << " " << Class << ", " << personalRating << " personal rating.";
+                                buf << "Level " << level << " " << race << " " << Class << ", " << personalRating << " personal rating.";
                                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                                 buf.str("");
-                                buf << " Week: " << weekWins << " win" << (weekWins == 1 ? "" : "s") << " (" << weekWinPercentage << "), " << weekLosses << " losse" << (weekLosses == 1 ? "" : "s") << ", " << (weekWins + weekLosses) << " total."; 
+                                buf << "Week: " << weekWins << "-" << weekLosses << " (" << weekWinPercentage << " win), " << (weekWins + weekLosses) << " played"; 
                                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                                 buf.str("");
-                                buf << " Season: " << seasonWins << " win" << (seasonWins == 1 ? "" : "s") << " (" << seasonWinPercentage << "), " << seasonLosses << " losse" << (seasonLosses == 1 ? "" : "s") << ", " << (seasonWins + seasonLosses) << " total."; 
+                                buf << "Season: " << seasonWins << "-" << seasonLosses << " (" << seasonWinPercentage << " win), " << (seasonWins + seasonLosses) << " played"; 
                                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                                 memberPos++;
                             } while(members->NextRow());
