@@ -30,7 +30,7 @@ enum ArenaGossipText {
     
 };
 
-class ArenaTeamRankIds : public CreatureScript
+class ArenaTeamRanks : public CreatureScript
 {
     private:
         uint32 optionToTeamType(uint32 option) {
@@ -295,3 +295,8 @@ class ArenaTeamRankIds : public CreatureScript
             return true;
         }
 };
+
+void AddSC_arenateamranks()
+{
+    new ArenaTeamRanks();
+}

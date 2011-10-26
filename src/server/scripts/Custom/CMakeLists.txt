@@ -26,6 +26,7 @@ set(scripts_STAT_SRCS
   Custom/petopia.cpp
   Custom/hunter_hourglass.cpp
   Custom/paw_teleporter.cpp
+  Custom/arenateamranks.cpp
 )
 
 message("  -> Prepared: Custom")
