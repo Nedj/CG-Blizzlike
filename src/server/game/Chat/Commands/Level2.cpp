@@ -716,6 +716,32 @@ bool ChatHandler::HandleLookupPlayerEmailCommand(const char* args)
     return LookupPlayerSearchCommand (result, limit);
 }
 
+bool ChatHandler::HandleLookupPlayerNameCommand(char const* args)
+{
+    char* name = strtok((char*)args, " ");
+    char* limit = strtok(NULL, " ");
+
+    Player* target;
+    uint64 targetGuid;
+    std::string targetName;
+
+    if (!extractPlayerTarget(name, &target, &targetGuid, &targetName))
+        return false;
+
+    if ((target && HasLowerSecurity(target, 0)) || HasLowerSecurity(NULL, targetGuid))
+        return false;
+
+    uint32 accountId = target ? target->GetSession()->GetAccountId() : sObjectMgr->GetPlayerAccountIdByGUID(targetGuid);
+
+    QueryResult result = LoginDatabase.PQuery("SELECT last_ip FROM account WHERE id = '%u'", accountId);
+
+    std::string ip = (*result)[0].GetString();
+
+    result = LoginDatabase.PQuery("SELECT id, username FROM account WHERE last_ip = '%s'", ip.c_str());
+
+    return LookupPlayerSearchCommand(result, int32(limit ? atoi(limit) : -1));
+}
+
 bool ChatHandler::LookupPlayerSearchCommand(QueryResult result, int32 limit)
 {
     if (!result)
