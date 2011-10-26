@@ -240,7 +240,7 @@ class BountyHunter : public CreatureScript
             }
             
             uint32 index = uiAction - GOSSIP_AFTER_PRICES;
-            if(index >= 64) {
+            if(index >= BOUNTY_LIMIT) {
                 player->GetSession()->SendNotification("An error has occurred.");
                 player->PlayerTalkClass->SendCloseGossip();
                 return false;
@@ -526,7 +526,7 @@ class BountyHunter : public CreatureScript
             uint32 bountyCount = bountyMap.size();
             uint32 titleTextId = BOUNTY_TEXT_HELLO;
 
-            if(bountyCount == 64) {
+            if(bountyCount == BOUNTY_LIMIT) {
                 // we are not excepting any more bounties.
                 titleTextId = BOUNTY_TEXT_FULL;
             } else {
@@ -637,37 +637,27 @@ class BountyHunter : public CreatureScript
 
         bool OnGossipSelectCode(Player *pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction, const char * ccode)
         {
-            sLog->outString("Player %s spoke to me with uiSender=%u and uiAction =%u, code: %s", pPlayer->GetName(), uiSender, uiAction, ccode);
             pPlayer->PlayerTalkClass->ClearMenus();
             if ( uiSender == GOSSIP_SENDER_MAIN )
             {
-                sLog->outString("Passed condition");
             if (uiAction < GOSSIP_PRICE_START || uiAction >= GOSSIP_PRICE_MAX) {
-                // invalid option, just close menu...
                 sLog->outString("Invalid action passed to bounty code.");
-                
                 return true;
             }
             // find out the corresponding bounty price
             uint32 index = uiAction - GOSSIP_PRICE_START;
             uint32 bountyPrice = bountyPrices[index] * 10000;
             
-            sLog->outString("Index = %u, price = %u", index, bountyPrice);
             
             // copy the string so we can edit it...
             
             std::string code = ccode;
-            // uppercase the first char
-            if(islower(code[0]))
-                code[0] = toupper(code[0]);
+            std::transform(code.begin(), code.end(), code.begin(), ::tolower);
+            code[0] = toupper(code[0]);
             
-            sLog->outString("Name ... %s", code.c_str());
             if(bountyMap.size() == BOUNTY_LIMIT) {
                 // no more bounties can be posted.
-                sLog->outString("Maximum bounty size reached");
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TALK, "I understand, I'll check back later! Goodbye!", GOSSIP_SENDER_MAIN, OPTION_GOODBYE);
-                pPlayer->PlayerTalkClass->SendGossipMenu(BOUNTY_TEXT_JUST_RAN_OUT, pCreature->GetGUID());
-                return true;
+                return closeGossipNotify(pPlayer, "Bounty list is currently full.");
             }
             
             Player *pBounty = sObjectAccessor->FindPlayerByName(code.c_str());
