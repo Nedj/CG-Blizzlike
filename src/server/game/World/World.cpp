@@ -1730,7 +1730,7 @@ void World::SetInitialWorldSettings()
     sLog->outString("Calculate random battleground reset time..." );
     InitRandomBGResetTime();
 
-    LoadCharacterNameData();
+    // LoadCharacterNameData();
 
     // possibly enable db logging; avoid massive startup spam by doing it here.
     if (sLog->GetLogDBLater())
@@ -2851,7 +2851,13 @@ void World::ProcessQueryCallbacks()
         }
     }
 }
+/*
+ * Nyse here, I'm not sure why we need to load all the character names on startup... it's kind of pointless, and takes up a lot of freaking memory. 
+ * Instead load name data on demand, and hit the database if we're not sure a character exists.
+ */
 
+/*
+ * This won't be called anymore
 void World::LoadCharacterNameData()
 {
     sLog->outString("Loading character name data");
@@ -2869,13 +2875,13 @@ void World::LoadCharacterNameData()
     {
         Field *fields = result->Fetch();
         AddCharacterNameData(fields[0].GetUInt32(), fields[1].GetString(),
-            fields[3].GetUInt8() /*gender*/, fields[2].GetUInt8() /*race*/, fields[4].GetUInt8() /*class*/);
+            fields[3].GetUInt8(), fields[2].GetUInt8(), fields[4].GetUInt8());
         ++count;
     } while (result->NextRow());
 
     sLog->outString("Loaded name data for %u characters", count);
 }
-
+*/
 void World::AddCharacterNameData(uint32 guid, const std::string& name, uint8 gender, uint8 race, uint8 playerClass)
 {
     CharacterNameData& data = _characterNameDataMap[guid];
@@ -2901,6 +2907,20 @@ const CharacterNameData* World::GetCharacterNameData(uint32 guid) const
     std::map<uint32, CharacterNameData>::const_iterator itr = _characterNameDataMap.find(guid);
     if (itr != _characterNameDataMap.end())
         return &itr->second;
-    else
+    
+    // query the database for the character
+    QueryResult result = CharacterDatabase.PQuery("SELECT name, race, gender, class FROM characters WHERE guid = '%u'", guid);
+    if(!result)
         return NULL;
+    
+    // add character to local db.
+    Field *fields = result->Fetch();
+    
+    CharacterNameData& data = _characterNameDataMap[guid];
+    data.m_name = fields[0].GetString();
+    data.m_race = fields[1].GetUInt8();
+    data.m_gender = fields[2].GetUInt8();
+    data.m_class = fields[3].GetUInt8();
+    
+    return &data;
 }
