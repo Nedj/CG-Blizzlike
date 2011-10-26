@@ -804,7 +804,7 @@ class BountyKills : public PlayerScript
         {
             BountyData *bounty = getBountyByGuid(victim->GetGUIDLow());
             if (bounty) {
-                if(bounty->posterguid != killer->GetGUIDLow())
+                if(victim->GetGUIDLow() != killer->GetGUIDLow())
                     m_bountyHunter->ClaimBounty(bounty, killer, victim);
             }
                 
