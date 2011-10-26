@@ -242,7 +242,7 @@ class ArenaTeamRanks : public CreatureScript
                             uint32 guid, personalRating, level;
                             std::string name, race, Class;
                             
-                            buf.str("")
+                            buf.str("");
                             buf << memberCount << " team " << ((memberCount == 1) ? "member" : " members") << " found:";
                             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, buf.str(), GOSSIP_SENDER_MAIN, ARENA_NOOP);
                             
