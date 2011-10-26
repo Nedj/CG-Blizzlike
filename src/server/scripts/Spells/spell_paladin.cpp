@@ -44,6 +44,8 @@ enum PaladinSpells
 
     PALADIN_SPELL_RIGHTEOUS_DEFENCE                      = 31789,
     PALADIN_SPELL_RIGHTEOUS_DEFENCE_EFFECT_1             = 31790,
+
+	PALADIN_SPELL_SACRED_SHIELD_EFFECT           = 58597,
 };
 
 // 31850 - Ardent Defender
@@ -404,6 +406,41 @@ public:
     }	
 };	
 
+// 58597 Sacred shield add cooldown
+class spell_pal_sacred_shield : public SpellScriptLoader
+{
+public:
+    spell_pal_sacred_shield() : SpellScriptLoader("spell_pal_sacred_shield") { }
+
+    class spell_pal_sacred_shield_AuraScript : public AuraScript
+    {
+        PrepareAuraScript(spell_pal_sacred_shield_AuraScript)
+        bool Validate(SpellInfo const* /*entry*/)
+        {
+            if (!sSpellMgr->GetSpellInfo(PALADIN_SPELL_SACRED_SHIELD_EFFECT))
+                return false;
+            return true;
+        }
+
+        void HandleEffectRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+        {
+            if (Unit* caster = GetCaster())
+                if (caster->ToPlayer())
+                    caster->ToPlayer()->AddSpellCooldown(PALADIN_SPELL_SACRED_SHIELD_EFFECT, 0, time(NULL) + 6);
+        }
+
+        void Register()
+        {
+            AfterEffectRemove += AuraEffectRemoveFn(spell_pal_sacred_shield_AuraScript::HandleEffectRemove, EFFECT_1, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
+        }
+    };
+
+    AuraScript *GetAuraScript() const
+    {
+        return new spell_pal_sacred_shield_AuraScript();
+    }
+};
+
 void AddSC_paladin_spell_scripts()
 {
     new spell_pal_ardent_defender();
@@ -414,4 +451,5 @@ void AddSC_paladin_spell_scripts()
     new spell_pal_judgement_of_command();
     new spell_pal_righteous_defense();
     new spell_pal_divine_storm();
+	new spell_pal_sacred_shield();
 }
