@@ -25,6 +25,7 @@ set(scripts_STAT_SRCS
   Custom/hunter_hourglass.cpp
   Custom/paw_teleporter.cpp
   Custom/arenateamranks.cpp
+  Custom/donations.cpp
 )
 
 message("  -> Prepared: Custom")

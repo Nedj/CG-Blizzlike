@@ -1254,6 +1254,7 @@ void AddBattlegroundScripts()
   void AddSc_Script_HHourglass();
   void AddSc_Script_PawTeleporter();
   void AddSC_arenateamranks();
+  void AddSC_DonationScript();
 #endif
 
 void AddCustomScripts()
@@ -1275,5 +1276,6 @@ void AddCustomScripts()
         AddSc_Script_HHourglass();
         AddSc_Script_PawTeleporter();
         AddSC_arenateamranks();
+        AddSC_DonationScript();
 #endif
 }

@@ -489,26 +489,6 @@ enum ScriptCommands
     SCRIPT_COMMAND_PLAYMOVIE             = 34                // source = Player, datalong = movie id
 };
 
-// Donation Types
-enum RewardType
-{
-	REWARD_TYPE_SINGLEITEM = 0,
-	REWARD_TYPE_MULTIITEM,
-	REWARD_TYPE_GOLD,
-	REWARD_TYPE_LEVEL,
-	REWARD_TYPE_SKILL,
-	REWARD_TYPE_SPELL,
-	REWARD_TYPE_TITLE,
-	REWARD_TYPE_REPUTATION,
-	REWARD_TYPE_ITEMSET,
-	REWARD_TYPE_RENAME,
-	REWARD_TYPE_CUSTOMIZE,
-	REWARD_TYPE_RACECHANGE,
-	REWARD_TYPE_FACTIONCHANGE,
-	NUM_DONATION_TYPES,
-};
-#define REWARD_SIZE 4
-
 /// Storage class for commands issued for delayed execution
 struct CliCommandHolder
 {
@@ -794,7 +774,6 @@ class World
         time_t m_startTime;
         time_t m_gameTime;
         IntervalTimer m_timers[WUPDATE_COUNT];
-		IntervalTimer m_rewardTimer; //votestuff
         time_t mail_timer;
         time_t mail_timer_expires;
         uint32 m_updateTime, m_updateTimeSum;
