@@ -49,7 +49,7 @@ class ArenaTeamRanks : public CreatureScript
                 case 3: option = ARENA_3V3_LADDER; break;
                 case 5: option = ARENA_5V5_LADDER; break;
             }
-            return teamType;
+            return option;
         }
         
         std::string raceToString(uint8 race) {
@@ -248,7 +248,7 @@ class ArenaTeamRanks : public CreatureScript
                             
                             do {
                                 // populate fields
-                                fields = result->Fetch();
+                                fields = members->Fetch();
                                 guid = fields[0].GetUInt32();
                                 personalRating = fields[1].GetUInt32();
                                 weekWins= fields[2].GetUInt32();
