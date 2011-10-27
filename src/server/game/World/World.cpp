@@ -108,10 +108,7 @@ World::World()
     m_availableDbcLocaleMask = 0;
 
     m_updateTimeSum = 0;
-   // vote stuff
-	m_rewardTimer.SetCurrent(0);
-    m_rewardTimer.SetInterval(30000);
-
+   
     m_isClosed = false;
 
     m_CleaningFlags = 0;
