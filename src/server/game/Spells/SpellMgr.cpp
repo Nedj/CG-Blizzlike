@@ -112,6 +112,13 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
                 return DIMINISHING_CHARGE;
             break;
         }
+		        case SPELLFAMILY_SHAMAN:
+        {
+            //Earthgrab
+            if(spellproto->SpellFamilyFlags[2] & 0x00004000)
+                return DIMINISHING_NONE;
+            break;
+        }
         case SPELLFAMILY_WARLOCK:
         {
             // Death Coil
