@@ -81,6 +81,8 @@ class BattlegroundMgr
 
         Battleground* GetBattlegroundTemplate(BattlegroundTypeId bgTypeId);
         Battleground* CreateNewBattleground(BattlegroundTypeId bgTypeId, PvPDifficultyEntry const* bracketEntry, uint8 arenaType, bool isRated);
+        /* for arena watcher */	
+        BattlegroundSet GetAllBattlegroundsWithTypeId(BattlegroundTypeId bgTypeId);
 
         uint32 CreateBattleground(CreateBattlegroundData& data);
 
