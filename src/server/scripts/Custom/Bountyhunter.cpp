@@ -381,7 +381,7 @@ class BountyHunter : public CreatureScript
         
         inline bool closeGossipNotify(Player *pPlayer, std::string message) {
             pPlayer->PlayerTalkClass->SendCloseGossip();
-            pPlayer->GetSession().SendNotification(message.c_str());
+            pPlayer->GetSession()->SendNotification(message.c_str());
             return true;
         }
     
