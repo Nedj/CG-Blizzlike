@@ -305,6 +305,8 @@ class ChatHandler
         bool HandleBankCommand(const char* args);
         bool HandleChangeWeather(const char* args);
         bool HandleKickPlayerCommand(const char * args);
+		// warp command
+        bool HandleWarpCommand(const char * args);
 
         // GM ticket command handlers
         bool HandleGMTicketListCommand(const char* args);
