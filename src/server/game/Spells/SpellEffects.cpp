@@ -636,6 +636,10 @@ void Spell::EffectSchoolDMG(SpellEffIndex effIndex)
                                     break;
                                 }
                             }
+                            	
+                            // Glyph of Envemom	
+                            if (m_caster->HasAura(64199))	
+                                needConsume = false;
 
                             if (needConsume)
                                 for (uint32 i = 0; i < doses; ++i)
