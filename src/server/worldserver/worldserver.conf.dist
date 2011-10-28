@@ -2657,6 +2657,13 @@ PlayerStart.MapsExplored = 0
 
 HonorPointsAfterDuel = 0
 
+#    GoldAfterDuel
+#        The base amount, in gold, to award the winner of a duel.
+#        Default: 0 - disable
+#
+
+GoldAfterDuel = 0
+
 #
 #    AlwaysMaxWeaponSkill
 #        Description: Players will automatically gain max weapon/defense skill when logging in,
