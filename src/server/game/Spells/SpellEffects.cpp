@@ -3265,6 +3265,11 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
 
     if (dispel_list.empty())
         return;
+    	
+    // If by any chance, there are less spells to dispel than the maximum number of dispellable spells, limit it.	
+    // IE Magic Dispel can dispel 2 spells, but we have only one dispellable buff, so limit the damage to 1.	
+    if (damage > dispel_list.size())	
+        damage = dispel_list.size();
 
     // Ok if exist some buffs for dispel try dispel it
     uint32 failCount = 0;
