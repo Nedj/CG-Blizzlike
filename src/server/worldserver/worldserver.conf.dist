@@ -2799,4 +2799,13 @@ PlayerDump.DisallowPaths = 1
 PlayerDump.DisallowOverwrite = 1
 
 #
+#     DuelReset.Cooldown
+#     Reseting cooldown and restore health to start duel
+#     Default: 0 - Disable
+#              1 - Enable
+#
+
+DuelReset.Cooldown = 1
+
+#
 ###################################################################################################

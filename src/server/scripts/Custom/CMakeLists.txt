@@ -26,6 +26,7 @@ set(scripts_STAT_SRCS
   Custom/paw_teleporter.cpp
   Custom/arenateamranks.cpp
   Custom/donations.cpp
+  Custom/duel_reset.cpp
 )
 
 message("  -> Prepared: Custom")

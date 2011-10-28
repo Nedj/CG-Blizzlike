@@ -1255,27 +1255,29 @@ void AddBattlegroundScripts()
   void AddSc_Script_PawTeleporter();
   void AddSC_arenateamranks();
   void AddSC_DonationScript();
+  void AddSC_DuelReset();
 #endif
 
 void AddCustomScripts()
 {
 #ifdef SCRIPTS
     /* This is where custom scripts should be added. */
-        AddSC_DB_CombatCheck();
+    AddSC_DB_CombatCheck();
 	AddSC_killstreak();
 	AddSC_BountyHunter();
-        AddSc_Script_TLeatherworking();
-        AddSc_Script_TAlchemy();
-        AddSc_Script_TEngineering();
-        AddSc_Script_TBlacksmithing();
-        AddSc_Script_TEnchanting();
-        AddSc_Script_TInscription();
-        AddSc_Script_TJewelcrafting();
-        AddSc_Script_TTailoring();
-        AddSc_Script_Petopia();
-        AddSc_Script_HHourglass();
-        AddSc_Script_PawTeleporter();
-        AddSC_arenateamranks();
-        AddSC_DonationScript();
+    AddSc_Script_TLeatherworking();
+    AddSc_Script_TAlchemy();
+    AddSc_Script_TEngineering();
+    AddSc_Script_TBlacksmithing();
+    AddSc_Script_TEnchanting();
+    AddSc_Script_TInscription();
+    AddSc_Script_TJewelcrafting();
+    AddSc_Script_TTailoring();
+    AddSc_Script_Petopia();
+    AddSc_Script_HHourglass();
+    AddSc_Script_PawTeleporter();
+    AddSC_arenateamranks();
+    AddSC_DonationScript();
+	 AddSC_DuelReset();
 #endif
 }
