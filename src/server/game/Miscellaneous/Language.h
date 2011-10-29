@@ -1059,6 +1059,22 @@ enum TrinityStrings
     LANG_INVALID_REALMID                = 11001,
 	LANG_BAN_CHEATER                    = 11002,
 
+	LANG_AT_NOT_EXIST                   = 20000,
+    LANG_AT_IS_FIGHTING                 = 20001,
+    LANG_AT_DISBAND_SUCCESS             = 20002,
+    LANG_AT_NOT_FOUND                   = 20003,
+    LANG_AT_RENAME_MAX                  = 20004,
+    LANG_AT_RENAME_EQUAL                = 20005,
+    LANG_AT_ALREADY_EXIST               = 20006,
+    LANG_AT_RENAME_SUCCESS              = 20007,
+    LANG_AT_LIST                        = 20008,
+    LANG_AT_PLAYER_NOT_EXIST            = 20009,
+    LANG_AT_NOT_MEMBER                  = 20010,
+    LANG_AT_ALREADY_CAPTAIN             = 20011,
+    LANG_AT_CAPTAIN_SUCCESS             = 20012,
+    LANG_AT_INFO_TEAM                   = 20013,
+    LANG_AT_INFO_MEMBER                 = 20014,
+
     // NOT RESERVED IDS                   12000-1999999999
     // `db_script_string` table index     2000000000-2000009999 (MIN_DB_SCRIPT_STRING_ID-MAX_DB_SCRIPT_STRING_ID)
     // For other tables maybe             2000010000-2147483647 (max index)
