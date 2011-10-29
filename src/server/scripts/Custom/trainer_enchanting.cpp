@@ -72,17 +72,15 @@ public:
                     pPlayer->learnSpellHighRank(59636); // Ring - Stamina
                     pCreature->MonsterWhisper("You have succesfully learned Enchanting!", pPlayer->GetGUID());
                 }
+                break;
 
+            case GOSSIP_ACTION_INFO_DEF + 2: // Ring Materials
+            pPlayer->CLOSE_GOSSIP_MENU();
+            pPlayer->AddItem(34054, 8);
+            pPlayer->AddItem(34055, 1);
         }
-        break;
-
-        case GOSSIP_ACTION_INFO_DEF + 2: // Ring Materials
-        pPlayer->CLOSE_GOSSIP_MENU();
-        pPlayer->AddItem(34054, 8);
-        pPlayer->AddItem(34055, 1);
+        return true;
     }
-    return true;
-}
 };
 
 void AddSc_Script_TEnchanting() {
